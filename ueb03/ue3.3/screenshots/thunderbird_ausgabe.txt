@@ -1,0 +1,4 @@
+1792413342755	Marionette	INFO	Listening on port 49537
+JavaScript error: resource://services-settings/Database.sys.mjs, line 19: EmptyDatabaseError: "blocklists/addons-bloomfilters" has not been synced yet
+1792413345290	Marionette	INFO	Stopped listening on port 49537
+JavaScript error: resource://nimbus/lib/SharedDataMap.sys.mjs, line 247: Error: SharedDataMap: in shutdown

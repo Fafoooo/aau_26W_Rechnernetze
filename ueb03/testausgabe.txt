@@ -1,0 +1,111 @@
+$ /home/ubuntu/.hermes/installs/5f0a1ff4045d044e/environments/a5e5360a344848f8a67441c22afa9a91/venv/bin/python3 -B -m unittest discover -s /home/ubuntu/uni/aau_26W_Rechnernetze/ueb03/ue3.2 -v
+test_context_exception_aborts_without_quit (test_pop3_client.ClientTests.test_context_exception_aborts_without_quit) ... ok
+test_empty_mailbox_cli_quits_without_retr (test_pop3_client.ClientTests.test_empty_mailbox_cli_quits_without_retr) ... ok
+test_fragmented_full_session_and_dot_unstuffing (test_pop3_client.ClientTests.test_fragmented_full_session_and_dot_unstuffing) ... ok
+test_full_socket_client_against_own_server_and_cli (test_pop3_client.ClientTests.test_full_socket_client_against_own_server_and_cli) ... ok
+test_greeting_errors_close_connection (test_pop3_client.ClientTests.test_greeting_errors_close_connection) ... ok
+test_injection_length_and_invalid_message_blocked_locally (test_pop3_client.ClientTests.test_injection_length_and_invalid_message_blocked_locally) ... ok
+test_malformed_listing_rejected (test_pop3_client.ClientTests.test_malformed_listing_rejected) ... ok
+test_negative_list_is_single_line_and_session_stays_usable (test_pop3_client.ClientTests.test_negative_list_is_single_line_and_session_stays_usable) ... ok
+test_quit_error_still_closes (test_pop3_client.ClientTests.test_quit_error_still_closes) ... ok
+test_rejected_login_cli_does_not_leak_password (test_pop3_client.ClientTests.test_rejected_login_cli_does_not_leak_password) ... ok
+test_truncated_multiline_and_invalid_dot_stuffing (test_pop3_client.ClientTests.test_truncated_multiline_and_invalid_dot_stuffing) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.424s
+
+OK
+
+
+$ /home/ubuntu/.hermes/installs/5f0a1ff4045d044e/environments/a5e5360a344848f8a67441c22afa9a91/venv/bin/python3 -B -m unittest discover -s /home/ubuntu/uni/aau_26W_Rechnernetze/ueb03/ue3.3 -v
+
+Echter CLI-Lauf (separater Server- und Clientprozess):
++OK RN POP3 ready (local plaintext lab)
+LIST (Nummer, Oktette): [(1, 184), (2, 185), (3, 154), (4, 164)]
+RETR 1:
+From: bob@example.com
+To: alice@example.com
+Subject: Welcome to the POP3 lab
+Date: Tue, 22 Sep 2026 09:00:00 +0200
+
+Hello Alice,
+
+Welcome to the POP3 laboratory.
+
+Best,
+Bob
+QUIT bestätigt; Verbindung geschlossen.
+
+test_authorization_wrong_states_and_syntax (test_pop3_server.ServerTests.test_authorization_wrong_states_and_syntax) ... ok
+test_canonicalization_preserves_trailing_blank_lines (test_pop3_server.ServerTests.test_canonicalization_preserves_trailing_blank_lines) ... ok
+test_command_length_limit_and_invalid_framing (test_pop3_server.ServerTests.test_command_length_limit_and_invalid_framing) ... ok
+test_concurrent_users_and_same_maildrop_rejected (test_pop3_server.ServerTests.test_concurrent_users_and_same_maildrop_rejected) ... ok
+test_dele_rset_update_and_uid_stability_after_renumber (test_pop3_server.ServerTests.test_dele_rset_update_and_uid_stability_after_renumber) ... ok
+test_disconnect_rolls_back_and_unlocks (test_pop3_server.ServerTests.test_disconnect_rolls_back_and_unlocks) ... ok
+test_empty_mailbox_and_quit_in_authorization (test_pop3_server.ServerTests.test_empty_mailbox_and_quit_in_authorization) ... ok
+test_fragmentation_multiple_commands_and_lowercase (test_pop3_server.ServerTests.test_fragmentation_multiple_commands_and_lowercase) ... ok
+test_original_data_and_readme_password_discrepancy (test_pop3_server.ServerTests.test_original_data_and_readme_password_discrepancy) ... ok
+test_password_with_spaces (test_pop3_server.ServerTests.test_password_with_spaces) ... ok
+test_poplib_full_session_sizes_capa_uidl_top_noop (test_pop3_server.ServerTests.test_poplib_full_session_sizes_capa_uidl_top_noop) ... ok
+test_real_server_cli_and_client_cli_subprocesses (test_pop3_server.ServerTests.test_real_server_cli_and_client_cli_subprocesses) ... ok
+test_server_close_aborts_active_session_without_update (test_pop3_server.ServerTests.test_server_close_aborts_active_session_without_update) ... ok
+test_timeout_rolls_back_and_releases_lock (test_pop3_server.ServerTests.test_timeout_rolls_back_and_releases_lock) ... ok
+test_wire_dot_stuffing_crlf_and_unicode_octets (test_pop3_server.ServerTests.test_wire_dot_stuffing_crlf_and_unicode_octets) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 1.104s
+
+OK
+
+
+$ /home/ubuntu/.hermes/installs/5f0a1ff4045d044e/environments/a5e5360a344848f8a67441c22afa9a91/venv/bin/python3 -B -m unittest discover -s /home/ubuntu/uni/aau_26W_Rechnernetze/ueb03/ue3.4 -v
+test_binary_and_no_headers (test_http09.HTTP09Tests.test_binary_and_no_headers) ... ok
+test_cli_help_and_invalid_options (test_http09.HTTP09Tests.test_cli_help_and_invalid_options) ... ok
+test_cli_serves_and_sigterm_exits_cleanly (test_http09.HTTP09Tests.test_cli_serves_and_sigterm_exits_cleanly) ... ok
+test_encoded_paths_and_query (test_http09.HTTP09Tests.test_encoded_paths_and_query) ... ok
+test_errors_are_silent (test_http09.HTTP09Tests.test_errors_are_silent) ... ok
+test_fragmentation (test_http09.HTTP09Tests.test_fragmentation) ... ok
+test_incomplete_eof (test_http09.HTTP09Tests.test_incomplete_eof) ... ok
+test_index_and_directories (test_http09.HTTP09Tests.test_index_and_directories) ... ok
+test_original_zip_files_exactly (test_http09.HTTP09Tests.test_original_zip_files_exactly) ... ok
+test_sequential_single_thread (test_http09.HTTP09Tests.test_sequential_single_thread) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.272s
+
+OK
+
+
+$ /home/ubuntu/.hermes/installs/5f0a1ff4045d044e/environments/a5e5360a344848f8a67441c22afa9a91/venv/bin/python3 -B -m unittest discover -s /home/ubuntu/uni/aau_26W_Rechnernetze/ueb03/ue3.5 -v
+test_absolute_request_deadline_even_with_trickling_bytes (test_http10.HTTP10Tests.test_absolute_request_deadline_even_with_trickling_bytes) ... ok
+test_cli_invalid_limits_and_missing_root (test_http10.HTTP10Tests.test_cli_invalid_limits_and_missing_root) ... ok
+test_cli_process_sigint_flushes_log_file (test_http10.HTTP10Tests.test_cli_process_sigint_flushes_log_file) ... ok
+test_cli_process_sigterm_flushes_log_file (test_http10.HTTP10Tests.test_cli_process_sigterm_flushes_log_file) ... ok
+test_empty_eof_is_not_a_request (test_http10.HTTP10Tests.test_empty_eof_is_not_a_request) ... ok
+test_errors_and_security (test_http10.HTTP10Tests.test_errors_and_security) ... ok
+test_explicit_close_wins_and_default_close (test_http10.HTTP10Tests.test_explicit_close_wins_and_default_close) ... ok
+test_fragmented_request_and_no_body (test_http10.HTTP10Tests.test_fragmented_request_and_no_body) ... ok
+test_get_head_binary_and_indexes (test_http10.HTTP10Tests.test_get_head_binary_and_indexes) ... ok
+test_header_controls_and_framing_still_rejected (test_http10.HTTP10Tests.test_header_controls_and_framing_still_rejected) ... ok
+test_http11_browser_compatibility_subset (test_http10.HTTP10Tests.test_http11_browser_compatibility_subset) ... ok
+test_invalid_sizes_headers_and_request_lines (test_http10.HTTP10Tests.test_invalid_sizes_headers_and_request_lines) ... ok
+test_latin1_header_text_and_ascii_request_line (test_http10.HTTP10Tests.test_latin1_header_text_and_ascii_request_line) ... ok
+test_legacy_and_explicit_versions_remain_distinct (test_http10.HTTP10Tests.test_legacy_and_explicit_versions_remain_distinct) ... ok
+test_legacy_errors_are_silent (test_http10.HTTP10Tests.test_legacy_errors_are_silent) ... ok
+test_legacy_fragmented_request (test_http10.HTTP10Tests.test_legacy_fragmented_request) ... ok
+test_legacy_get_files_and_close (test_http10.HTTP10Tests.test_legacy_get_files_and_close) ... ok
+test_legacy_requests_have_separate_workers_and_logs (test_http10.HTTP10Tests.test_legacy_requests_have_separate_workers_and_logs) ... ok
+test_max_clients_rejects_overload_and_recovers (test_http10.HTTP10Tests.test_max_clients_rejects_overload_and_recovers) ... ok
+test_original_zip_files_exactly (test_http10.HTTP10Tests.test_original_zip_files_exactly) ... ok
+test_parallel_clients_despite_blocked_reader (test_http10.HTTP10Tests.test_parallel_clients_despite_blocked_reader) ... ok
+test_persistent_sequential_and_head_error_framing (test_http10.HTTP10Tests.test_persistent_sequential_and_head_error_framing) ... ok
+test_pipelining_order_and_each_request_gets_new_thread (test_http10.HTTP10Tests.test_pipelining_order_and_each_request_gets_new_thread) ... ok
+test_repeated_list_headers_and_connection_precedence (test_http10.HTTP10Tests.test_repeated_list_headers_and_connection_precedence) ... ok
+test_shutdown_closes_active_client_and_flushes_logs (test_http10.HTTP10Tests.test_shutdown_closes_active_client_and_flushes_logs) ... ok
+test_timeout_partial_and_incomplete_eof (test_http10.HTTP10Tests.test_timeout_partial_and_incomplete_eof) ... ok
+test_real_five_second_batch_and_final_flush (test_http10.LoggerTests.test_real_five_second_batch_and_final_flush) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 12.231s
+
+OK

@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-10-19T15:01:36.557765+02:00",
+  "suites": [
+    {
+      "suite": "ue3.2",
+      "count": 11,
+      "seconds": 0.424,
+      "exit_code": 0
+    },
+    {
+      "suite": "ue3.3",
+      "count": 15,
+      "seconds": 1.104,
+      "exit_code": 0
+    },
+    {
+      "suite": "ue3.4",
+      "count": 10,
+      "seconds": 2.272,
+      "exit_code": 0
+    },
+    {
+      "suite": "ue3.5",
+      "count": 27,
+      "seconds": 12.231,
+      "exit_code": 0
+    }
+  ],
+  "test_count": 63,
+  "source_sha256": {
+    "integration_test.py": "d8c4a9771ffe83d88188d1d7015256c5d0a75678f446d57b3ec72735842c9a1f",
+    "ue3.5/server.py": "1f0e60e17dc8699c6cc44a56e451fa06e43e3fe790c0b66a9d321581e61fd5cb",
+    "ue3.5/test_http10.py": "32960d243f651f080fcb33a14b64425bd408527fcc36ee8762a38226597ad70e",
+    "ue3.2/test_pop3_client.py": "4c278d782060081fe00398dab125998b886182fa883012f2f987a7216a0d6530",
+    "ue3.2/pop3_client.py": "56e62dccc1f8c48f5391e8661c1bc656155ddb34cf741c3866d9a0c6f5f91b53",
+    "ue3.4/server.py": "b8279db7efdf990bb202b5073110f3aa1f8d0859338d57ded5b0b7e06f377ce6",
+    "ue3.4/test_http09.py": "8948185b6667f48d7a3a03d5e6cbddbb2d55017ce78fc739708b511d67faab49",
+    "ue3.3/gui_test.py": "09fdc4f193e8d4fccf70b0db2971a36222b7eadf6adb325f43d6fd85e0862ce1",
+    "ue3.3/pop3_server.py": "9ee43eadcab08b4bec575b8428b091dc9999a5853c48b8d9154ae351a8083e96",
+    "ue3.3/test_pop3_server.py": "3887f98b90b90691814c51fc04e5e9c92c4d0131b5eff5729a725e98e9cca4fc"
+  },
+  "originals_unchanged": true,
+  "line_by_line_core_code_verified": true,
+  "gui_browser_go_evidence_verified": true
+}

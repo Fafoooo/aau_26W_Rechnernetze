@@ -1,0 +1,108 @@
+{
+  "started_utc": "2026-10-19T12:35:42.110840+00:00",
+  "status": "PASS",
+  "source_sha256_before": {
+    "pop3_server.py": "9ee43eadcab08b4bec575b8428b091dc9999a5853c48b8d9154ae351a8083e96",
+    "SampleDataBase.py": "71f16433a5218c2a21fb696c86cc828a7613b213693b329b558aaf2e73a92297"
+  },
+  "expected_subjects": [
+    "Welcome to the POP3 lab",
+    "Network Programming Exercise",
+    "Meeting tomorrow",
+    "POP3 server test"
+  ],
+  "pop3_address": [
+    "127.0.0.1",
+    40089
+  ],
+  "thunderbird_version": "Mozilla Thunderbird 158.0",
+  "xvfb_pid": 1211459,
+  "thunderbird_pid": 1211462,
+  "received_subjects": [
+    "Welcome to the POP3 lab",
+    "Network Programming Exercise",
+    "Meeting tomorrow",
+    "POP3 server test"
+  ],
+  "visible_subjects": [
+    "POP3 server test",
+    "Meeting tomorrow",
+    "Network Programming Exercise",
+    "Welcome to the POP3 lab"
+  ],
+  "screenshots": {
+    "inbox.png": "0461c8d158a643e846826d9bfe5a3806a615d8246969f9c969939d78c2983ec5",
+    "mail_offen.png": "bdb29aba0ccf3e8fe6a63eb2239cd1431462bba066a65bbd86aa13036e72442e"
+  },
+  "opened_message": {
+    "subject": "Welcome to the POP3 lab",
+    "body": "Hello Alice,\n\nWelcome to the POP3 laboratory.\n\nBest,\nBob",
+    "body_matches_original": true
+  },
+  "thunderbird_exit_code": 0,
+  "profile_removed_after_run": true,
+  "retr_commands": [
+    "1",
+    "2",
+    "3",
+    "4"
+  ],
+  "protocol_events": [
+    {
+      "command": "CAPA",
+      "argument": ""
+    },
+    {
+      "command": "USER",
+      "argument": "alice"
+    },
+    {
+      "command": "PASS",
+      "argument": "<redacted>"
+    },
+    {
+      "command": "STAT",
+      "argument": ""
+    },
+    {
+      "command": "LIST",
+      "argument": ""
+    },
+    {
+      "command": "UIDL",
+      "argument": ""
+    },
+    {
+      "command": "RETR",
+      "argument": "1"
+    },
+    {
+      "command": "RETR",
+      "argument": "2"
+    },
+    {
+      "command": "RETR",
+      "argument": "3"
+    },
+    {
+      "command": "RETR",
+      "argument": "4"
+    },
+    {
+      "command": "QUIT",
+      "argument": ""
+    }
+  ],
+  "source_sha256_after": {
+    "pop3_server.py": "9ee43eadcab08b4bec575b8428b091dc9999a5853c48b8d9154ae351a8083e96",
+    "SampleDataBase.py": "71f16433a5218c2a21fb696c86cc828a7613b213693b329b558aaf2e73a92297"
+  },
+  "protected_sources_unchanged": true,
+  "cleanup": {
+    "thunderbird_stopped": true,
+    "xvfb_stopped": true,
+    "server_thread_stopped": true,
+    "server_socket_closed": true
+  },
+  "finished_utc": "2026-10-19T12:35:45.486631+00:00"
+}
