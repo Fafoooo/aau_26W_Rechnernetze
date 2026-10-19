@@ -1,0 +1,212 @@
+{
+  "file": "dump_http.pcap",
+  "sha256": "d2d7195f15ba21e5952481e41e302adec96aee516fcc6256329cf896b33d2f3c",
+  "packets": 68,
+  "frame_bytes": 37475,
+  "protocol_packets": {
+    "Ethernet": 68,
+    "IPv4": 68,
+    "TCP": 68
+  },
+  "tcp_connections": 3,
+  "streams": [
+    {
+      "stream": 0,
+      "client": [
+        "192.168.3.10",
+        37184
+      ],
+      "server": [
+        "192.168.1.10",
+        80
+      ],
+      "syn_sequence": 3436769801,
+      "first_ns": 1316089928530874000,
+      "last_ns": 1316089928832173000,
+      "packets": [
+        5,
+        5
+      ],
+      "frame_bytes": [
+        476,
+        760
+      ],
+      "ip_bytes": [
+        406,
+        690
+      ],
+      "tcp_payload_bytes": [
+        138,
+        422
+      ],
+      "syn_ack": true,
+      "unique_tcp_payload_bytes": [
+        138,
+        422
+      ],
+      "duration_seconds": "0.301299000",
+      "http_requests": [
+        {
+          "start_line": "GET /test/ HTTP/1.0",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+            "accept": "*/*",
+            "host": "192.168.1.10"
+          },
+          "body_bytes": 0,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "http_responses": [
+        {
+          "start_line": "HTTP/1.1 200 OK",
+          "headers": {
+            "date": "Thu, 15 Sep 2011 12:32:08 GMT",
+            "server": "Apache/2.2.14 (Ubuntu)",
+            "last-modified": "Thu, 15 Sep 2011 11:58:32 GMT",
+            "etag": "\"720063-91-4acf9987eb65e\"",
+            "accept-ranges": "bytes",
+            "content-length": "145",
+            "vary": "Accept-Encoding",
+            "connection": "close",
+            "content-type": "text/html"
+          },
+          "body_bytes": 145,
+          "body_sha256": "159d5cea55b19a25c2c6308fa0fb9845c5689c698ace744d237593e071805a40"
+        }
+      ]
+    },
+    {
+      "stream": 1,
+      "client": [
+        "192.168.3.10",
+        37185
+      ],
+      "server": [
+        "192.168.1.10",
+        80
+      ],
+      "syn_sequence": 3443522043,
+      "first_ns": 1316089928732406000,
+      "last_ns": 1316089929033654000,
+      "packets": [
+        7,
+        7
+      ],
+      "frame_bytes": [
+        616,
+        5198
+      ],
+      "ip_bytes": [
+        518,
+        5100
+      ],
+      "tcp_payload_bytes": [
+        146,
+        4728
+      ],
+      "syn_ack": true,
+      "unique_tcp_payload_bytes": [
+        146,
+        4728
+      ],
+      "duration_seconds": "0.301248000",
+      "http_requests": [
+        {
+          "start_line": "GET /test/logo.gif HTTP/1.0",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+            "accept": "*/*",
+            "host": "192.168.1.10"
+          },
+          "body_bytes": 0,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "http_responses": [
+        {
+          "start_line": "HTTP/1.1 200 OK",
+          "headers": {
+            "date": "Thu, 15 Sep 2011 12:32:08 GMT",
+            "server": "Apache/2.2.14 (Ubuntu)",
+            "last-modified": "Thu, 01 Sep 2011 09:32:12 GMT",
+            "etag": "\"72004d-115d-4abddeb617f00\"",
+            "accept-ranges": "bytes",
+            "content-length": "4445",
+            "connection": "close",
+            "content-type": "image/gif",
+            "x-pad": "avoid browser bug"
+          },
+          "body_bytes": 4445,
+          "body_sha256": "c6edf448e7b964488db37dc1f0b730baef2e53ec4e828f4ab69ec8a92a096ae1"
+        }
+      ]
+    },
+    {
+      "stream": 2,
+      "client": [
+        "192.168.3.10",
+        37186
+      ],
+      "server": [
+        "192.168.1.10",
+        80
+      ],
+      "syn_sequence": 3452365731,
+      "first_ns": 1316089928933670000,
+      "last_ns": 1316089929435864000,
+      "packets": [
+        22,
+        22
+      ],
+      "frame_bytes": [
+        1616,
+        28809
+      ],
+      "ip_bytes": [
+        1308,
+        28501
+      ],
+      "tcp_payload_bytes": [
+        156,
+        27349
+      ],
+      "syn_ack": true,
+      "unique_tcp_payload_bytes": [
+        156,
+        27349
+      ],
+      "duration_seconds": "0.502194000",
+      "http_requests": [
+        {
+          "start_line": "GET /test/TechnikErleben.png HTTP/1.0",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+            "accept": "*/*",
+            "host": "192.168.1.10"
+          },
+          "body_bytes": 0,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "http_responses": [
+        {
+          "start_line": "HTTP/1.1 200 OK",
+          "headers": {
+            "date": "Thu, 15 Sep 2011 12:32:09 GMT",
+            "server": "Apache/2.2.14 (Ubuntu)",
+            "last-modified": "Sun, 27 Mar 2011 21:01:39 GMT",
+            "etag": "\"72005d-69b9-49f7d221e92c0\"",
+            "accept-ranges": "bytes",
+            "content-length": "27065",
+            "connection": "close",
+            "content-type": "image/png",
+            "x-pad": "avoid browser bug"
+          },
+          "body_bytes": 27065,
+          "body_sha256": "a68cf53db729ce68eee5e146d640bbf0949c123c18a28794b19e46d13de43f6a"
+        }
+      ]
+    }
+  ]
+}

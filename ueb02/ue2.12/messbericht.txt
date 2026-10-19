@@ -1,0 +1,46 @@
+Byteangaben dezimal; Dauer = letztes minus erstes Paket der Verbindung.
+
+dump_http.pcap: 68 Pakete, 3 TCP-Verbindungen
+Stream 0: ['192.168.3.10', 37184] → ['192.168.1.10', 80]
+  Frame-Bytes C→S/S→C: [476, 760]; Summe 1236
+  IPv4-Bytes C→S/S→C: [406, 690]; Summe 1096
+  TCP-Nutzbytes C→S/S→C: [138, 422]; Summe 560
+  Dauer: 0.301299000 s
+  GET /test/ HTTP/1.0 → HTTP/1.1 200 OK
+    Body: 145 B; Typ text/html
+Stream 1: ['192.168.3.10', 37185] → ['192.168.1.10', 80]
+  Frame-Bytes C→S/S→C: [616, 5198]; Summe 5814
+  IPv4-Bytes C→S/S→C: [518, 5100]; Summe 5618
+  TCP-Nutzbytes C→S/S→C: [146, 4728]; Summe 4874
+  Dauer: 0.301248000 s
+  GET /test/logo.gif HTTP/1.0 → HTTP/1.1 200 OK
+    Body: 4445 B; Typ image/gif
+Stream 2: ['192.168.3.10', 37186] → ['192.168.1.10', 80]
+  Frame-Bytes C→S/S→C: [1616, 28809]; Summe 30425
+  IPv4-Bytes C→S/S→C: [1308, 28501]; Summe 29809
+  TCP-Nutzbytes C→S/S→C: [156, 27349]; Summe 27505
+  Dauer: 0.502194000 s
+  GET /test/TechnikErleben.png HTTP/1.0 → HTTP/1.1 200 OK
+    Body: 27065 B; Typ image/png
+
+dump_protocols.pcap: 39 Pakete, 1 TCP-Verbindungen
+Stream 0: ['192.168.1.215', 54961] → ['192.168.1.1', 80]
+  Frame-Bytes C→S/S→C: [567, 1196]; Summe 1763
+  IPv4-Bytes C→S/S→C: [455, 1072]; Summe 1527
+  TCP-Nutzbytes C→S/S→C: [115, 740]; Summe 855
+  Dauer: 0.007399000 s
+  GET / HTTP/1.1 → HTTP/1.1 200 OK
+    Body: 577 B; Typ text/html
+
+dump_http_persistent.pcap: 46 Pakete, 1 TCP-Verbindungen
+Stream 0: ['192.168.3.10', 50776] → ['192.168.1.10', 80]
+  Frame-Bytes C→S/S→C: [1774, 34349]; Summe 36123
+  IPv4-Bytes C→S/S→C: [1508, 33971]; Summe 35479
+  TCP-Nutzbytes C→S/S→C: [512, 32559]; Summe 33071
+  Dauer: 0.704626000 s
+  GET /test/ HTTP/1.0 → HTTP/1.1 200 OK
+    Body: 145 B; Typ text/html
+  GET /test/logo.gif HTTP/1.0 → HTTP/1.1 200 OK
+    Body: 4445 B; Typ image/gif
+  GET /test/TechnikErleben.png HTTP/1.0 → HTTP/1.1 200 OK
+    Body: 27065 B; Typ image/png

@@ -1,0 +1,12 @@
+FAP/1: In-Memory-Unterrichtssimulation, ohne TLS und ohne echte Bank.
+AUTH OK (PIN und Sitzung werden nicht ausgegeben)
+BALANCE OK {'booked': 10000, 'available': 10000, 'currency': 'EUR'}
+RESERVE OK {'tx': 'ee438972-a326-4882-9bcb-cb447a87ec1a', 'amount': 4000, 'currency': 'EUR', 'state': 'RESERVED'}
+BEGIN OK {'tx': 'ee438972-a326-4882-9bcb-cb447a87ec1a', 'amount': 4000, 'currency': 'EUR', 'state': 'DISPENSING'}
+RESULT-Antwort absichtlich verworfen; dieselbe Nachricht erneut senden.
+RESULT (Retry) OK {'tx': 'ee438972-a326-4882-9bcb-cb447a87ec1a', 'amount': 4000, 'currency': 'EUR', 'state': 'COMMITTED'}
+BALANCE OK {'booked': 6000, 'available': 6000, 'currency': 'EUR'}
+RESERVE OK {'tx': '2b08667b-59e1-4648-b543-c69c151b0a03', 'amount': 7000, 'currency': 'EUR', 'state': 'DECLINED'}
+Zu wenig Deckung: keine Reservierung, keine Ausgabe, keine Abbuchung.
+LOGOUT OK {}
+Demo-Prüfungen erfolgreich; ausgegebene Cent: 4000

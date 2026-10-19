@@ -1,0 +1,2 @@
+Address A,Port A,Address B,Port B,Packets,Bytes,Stream ID,Packets A → B,Bytes A → B,Packets B → A,Bytes B → A,Rel Start,Duration,Bits/s A → B,Bits/s B → A,Flows
+"192.168.1.215",54961,"192.168.1.1",80,16,1763,0,8,567,8,1196,16.998177,0.007399000000003042,613055,1293147,6

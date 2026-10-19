@@ -1,0 +1,136 @@
+{
+  "file": "dump_http_persistent.pcap",
+  "sha256": "a50377f3f14bcb8fcc763336f263e0ba921fd8daf4ae96be6506f33d49a68d48",
+  "packets": 46,
+  "frame_bytes": 36123,
+  "protocol_packets": {
+    "Ethernet": 46,
+    "IPv4": 46,
+    "TCP": 46
+  },
+  "tcp_connections": 1,
+  "streams": [
+    {
+      "stream": 0,
+      "client": [
+        "192.168.3.10",
+        50776
+      ],
+      "server": [
+        "192.168.1.10",
+        80
+      ],
+      "syn_sequence": 1826566191,
+      "first_ns": 1316090373579871000,
+      "last_ns": 1316090374284497000,
+      "packets": [
+        19,
+        27
+      ],
+      "frame_bytes": [
+        1774,
+        34349
+      ],
+      "ip_bytes": [
+        1508,
+        33971
+      ],
+      "tcp_payload_bytes": [
+        512,
+        32559
+      ],
+      "syn_ack": true,
+      "unique_tcp_payload_bytes": [
+        512,
+        32559
+      ],
+      "duration_seconds": "0.704626000",
+      "http_requests": [
+        {
+          "start_line": "GET /test/ HTTP/1.0",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+            "accept": "*/*",
+            "host": "192.168.1.10",
+            "connection": "Keep-Alive"
+          },
+          "body_bytes": 0,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "start_line": "GET /test/logo.gif HTTP/1.0",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+            "accept": "*/*",
+            "host": "192.168.1.10",
+            "connection": "Keep-Alive"
+          },
+          "body_bytes": 0,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "start_line": "GET /test/TechnikErleben.png HTTP/1.0",
+          "headers": {
+            "user-agent": "Mozilla/5.0 (X11; Linux i686; rv:6.0.2) Gecko/20100101 Firefox/6.0.2",
+            "accept": "*/*",
+            "host": "192.168.1.10",
+            "connection": "Keep-Alive"
+          },
+          "body_bytes": 0,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "http_responses": [
+        {
+          "start_line": "HTTP/1.1 200 OK",
+          "headers": {
+            "date": "Thu, 15 Sep 2011 12:39:33 GMT",
+            "server": "Apache/2.2.14 (Ubuntu)",
+            "last-modified": "Thu, 15 Sep 2011 11:58:32 GMT",
+            "etag": "\"720063-91-4acf9987eb65e\"",
+            "accept-ranges": "bytes",
+            "content-length": "145",
+            "vary": "Accept-Encoding",
+            "keep-alive": "timeout=15, max=100",
+            "connection": "Keep-Alive",
+            "content-type": "text/html"
+          },
+          "body_bytes": 145,
+          "body_sha256": "159d5cea55b19a25c2c6308fa0fb9845c5689c698ace744d237593e071805a40"
+        },
+        {
+          "start_line": "HTTP/1.1 200 OK",
+          "headers": {
+            "date": "Thu, 15 Sep 2011 12:39:33 GMT",
+            "server": "Apache/2.2.14 (Ubuntu)",
+            "last-modified": "Thu, 01 Sep 2011 09:32:12 GMT",
+            "etag": "\"72004d-115d-4abddeb617f00\"",
+            "accept-ranges": "bytes",
+            "content-length": "4445",
+            "keep-alive": "timeout=15, max=99",
+            "connection": "Keep-Alive",
+            "content-type": "image/gif"
+          },
+          "body_bytes": 4445,
+          "body_sha256": "c6edf448e7b964488db37dc1f0b730baef2e53ec4e828f4ab69ec8a92a096ae1"
+        },
+        {
+          "start_line": "HTTP/1.1 200 OK",
+          "headers": {
+            "date": "Thu, 15 Sep 2011 12:39:33 GMT",
+            "server": "Apache/2.2.14 (Ubuntu)",
+            "last-modified": "Sun, 27 Mar 2011 21:01:39 GMT",
+            "etag": "\"72005d-69b9-49f7d221e92c0\"",
+            "accept-ranges": "bytes",
+            "content-length": "27065",
+            "keep-alive": "timeout=15, max=98",
+            "connection": "Keep-Alive",
+            "content-type": "image/png"
+          },
+          "body_bytes": 27065,
+          "body_sha256": "a68cf53db729ce68eee5e146d640bbf0949c123c18a28794b19e46d13de43f6a"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "output": "/home/ubuntu/uni/aau_26W_Rechnernetze/ueb02/ue2.10/eigene_aufzeichnung.pcap",
+  "server_port": 44625,
+  "client_port": 52599,
+  "capture_filter": "ip and tcp and src host 127.0.0.1 and dst host 127.0.0.1 and ((src port 52599 and dst port 44625) or (src port 44625 and dst port 52599))",
+  "response_bytes": 118,
+  "body": "RN UE2.10: harmless loopback demo\n",
+  "command": [
+    "sudo",
+    "-n",
+    "dumpcap",
+    "-i",
+    "lo",
+    "-p",
+    "-F",
+    "pcap",
+    "-f",
+    "ip and tcp and src host 127.0.0.1 and dst host 127.0.0.1 and ((src port 52599 and dst port 44625) or (src port 44625 and dst port 52599))",
+    "-a",
+    "duration:3",
+    "-w",
+    "-"
+  ],
+  "dumpcap_log": "Capturing on 'Loopback: lo'\nFile: -\n\rPackets: 1 \rPackets: 10 \rPackets captured: 10\nPackets received/dropped on interface 'Loopback: lo': 10/0 (pcap:0/dumpcap:0/flushed:0/ps_ifdrop:0) (100.0%)\n"
+}

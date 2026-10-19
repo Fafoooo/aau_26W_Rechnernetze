@@ -1,0 +1,12 @@
+test_01_real_nonempty_capture (__main__.CaptureTests.test_01_real_nonempty_capture) ... ok
+test_02_only_own_loopback_tuple (__main__.CaptureTests.test_02_only_own_loopback_tuple) ... ok
+test_03_exact_http_request (__main__.CaptureTests.test_03_exact_http_request) ... ok
+test_04_exact_http_response (__main__.CaptureTests.test_04_exact_http_response) ... ok
+test_05_tcp_open_close_no_reset (__main__.CaptureTests.test_05_tcp_open_close_no_reset) ... ok
+test_06_safe_capture_options (__main__.CaptureTests.test_06_safe_capture_options) ... ok
+test_07_refuse_to_overwrite (__main__.CaptureTests.test_07_refuse_to_overwrite) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.000s
+
+OK

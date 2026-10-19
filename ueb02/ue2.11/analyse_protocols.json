@@ -1,0 +1,81 @@
+{
+  "file": "dump_protocols.pcap",
+  "sha256": "2db07f853d09621f21364a72612d0e1e0d951e0ade05a615eb17a69730b28c55",
+  "packets": 39,
+  "frame_bytes": 4167,
+  "protocol_packets": {
+    "Ethernet": 39,
+    "IPv4": 29,
+    "UDP": 9,
+    "DHCP": 3,
+    "ARP": 10,
+    "ICMP": 4,
+    "DNS": 6,
+    "TCP": 16
+  },
+  "tcp_connections": 1,
+  "streams": [
+    {
+      "stream": 0,
+      "client": [
+        "192.168.1.215",
+        54961
+      ],
+      "server": [
+        "192.168.1.1",
+        80
+      ],
+      "syn_sequence": 1184468142,
+      "first_ns": 1316076523930247000,
+      "last_ns": 1316076523937646000,
+      "packets": [
+        8,
+        8
+      ],
+      "frame_bytes": [
+        567,
+        1196
+      ],
+      "ip_bytes": [
+        455,
+        1072
+      ],
+      "tcp_payload_bytes": [
+        115,
+        740
+      ],
+      "syn_ack": true,
+      "unique_tcp_payload_bytes": [
+        115,
+        740
+      ],
+      "duration_seconds": "0.007399000",
+      "http_requests": [
+        {
+          "start_line": "GET / HTTP/1.1",
+          "headers": {
+            "user-agent": "Wget/1.13.3 (linux-gnu)",
+            "accept": "*/*",
+            "host": "homegateway.lan",
+            "connection": "Keep-Alive"
+          },
+          "body_bytes": 0,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "http_responses": [
+        {
+          "start_line": "HTTP/1.1 200 OK",
+          "headers": {
+            "connection": "close",
+            "date": "Thu, 15 Sep 2011 08:48:47 GMT",
+            "transfer-encoding": "chunked",
+            "content-type": "text/html"
+          },
+          "body_bytes": 577,
+          "body_sha256": "8e053fe24fe9f1b69415f26b763e6bd614fffe38343b946db5761073a542e3f7"
+        }
+      ]
+    }
+  ]
+}

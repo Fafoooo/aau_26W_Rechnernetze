@@ -1,0 +1,26 @@
+// KI-Kennzeichnung: Hermes Agent / OpenAI gpt-6.1-sol, 2026-10-19
+// Anfrage: Tatsächlich beobachtete Protokollhierarchie aus dump_protocols.pcap zeichnen.
+digraph Protokolle {
+  graph [rankdir=TB, bgcolor="white", label="dump_protocols.pcap – beobachtete Kapselung", labelloc=t];
+  node [shape=box, style="rounded,filled", fillcolor="#eaf3fa", fontname="DejaVu Sans"];
+  edge [color="#3b556a"];
+  ethernet [label="Ethernet (39)\nNetzzugang"];
+  arp [label="ARP (10)\nNetzzugang"];
+  ip [label="IPv4 (29)\nInternet"];
+  icmp [label="ICMP (4)\nInternet"];
+  udp [label="UDP (9)\nTransport"];
+  tcp [label="TCP (16)\nTransport; 1 Verbindung"];
+  dhcp [label="DHCP (3)\nAnwendung; BOOTP-Format"];
+  dns [label="DNS (6)\nAnwendung"];
+  http [label="HTTP (2 GUI-Zuordnungen)\nAnwendung"];
+  text [label="HTML / Line-based text (1)\nHTTP-Inhalt, kein eigenes Protokoll", fillcolor="#f5f5f5"];
+  ethernet -> arp;
+  ethernet -> ip;
+  ip -> icmp;
+  ip -> udp;
+  ip -> tcp;
+  udp -> dhcp;
+  udp -> dns;
+  tcp -> http;
+  http -> text;
+}

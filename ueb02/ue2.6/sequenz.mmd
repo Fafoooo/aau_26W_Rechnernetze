@@ -1,0 +1,33 @@
+%% KI: Hermes Agent / OpenAI gpt-6.1-sol; 2026-10-19; Auftrag: Ü2.6 Sequenz einer erfolgreichen Abhebung.
+sequenceDiagram
+    autonumber
+    actor U as Benutzer
+    participant A as Automat
+    participant B as Bankzentrale
+    participant D as Auszahler
+    Note over A,B: Entwurf: TCP + TLS 1.3 mit gegenseitiger Zertifikatsprüfung (Demo: nur lokale Aufrufe)
+    U->>A: Karte DEMO-CARD-A, PIN (nicht protokollieren)
+    A->>B: AUTH {card, pin}; sid=null
+    B->>B: Karte + PIN prüfen; Sitzung an Automat binden
+    B-->>A: OK {sid, expires_in:300}
+    A->>B: BALANCE {}
+    B-->>A: OK {booked:10000, available:10000, currency:EUR}
+    U->>A: 40 EUR abheben
+    A->>B: RESERVE {tx:T, amount:4000}
+    B->>B: Atomar Deckung prüfen, 4000 Cent reservieren
+    B-->>A: OK {tx:T, state:RESERVED, amount:4000, currency:EUR}
+    A->>B: BEGIN {tx:T}
+    B->>B: Zustand DISPENSING vor Freigabe festhalten
+    B-->>A: OK {tx:T, state:DISPENSING, amount:4000, currency:EUR}
+    A->>A: Auszahlversuch für T vor Hardwareaufruf journalisieren
+    A->>D: Einmaliger Auszahlversuch(T,4000)
+    D-->>U: 40 EUR Bargeld
+    D-->>A: Eindeutig vollständig ausgegeben: OK
+    A->>B: RESULT {tx:T, outcome:OK}
+    B->>B: Einmal 4000 Cent abbuchen, Reservierung entfernen
+    B-->>A: OK {tx:T, state:COMMITTED, amount:4000, currency:EUR}
+    A->>B: BALANCE {}
+    B-->>A: OK {booked:6000, available:6000, currency:EUR}
+    A->>B: LOGOUT {}
+    B-->>A: OK {}
+    A-->>U: Karte zurückgeben, Beleg anbieten
