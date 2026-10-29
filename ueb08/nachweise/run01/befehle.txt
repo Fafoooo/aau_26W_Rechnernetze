@@ -1,0 +1,481 @@
+[switch] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[switch] ip link add brA type bridge stp_state 0 forward_delay 0
+RC=0
+
+[switch] ip link set brA up
+RC=0
+
+[client1] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[client1] ip link set lo up
+RC=0
+
+[switch] ip link add p1 type veth peer name client1-eth0 netns 2715361
+RC=0
+
+[switch] ip link set p1 master brA
+RC=0
+
+[switch] ip link set p1 up
+RC=0
+
+[client1] ip link set client1-eth0 address 00:00:00:00:00:01
+RC=0
+
+[client1] ip addr add 10.0.1.2/24 dev client1-eth0
+RC=0
+
+[client1] ip link set client1-eth0 up
+RC=0
+
+[switch] ethtool -K p1 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[client1] ethtool -K client1-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[client2] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[client2] ip link set lo up
+RC=0
+
+[switch] ip link add p2 type veth peer name client2-eth0 netns 2715372
+RC=0
+
+[switch] ip link set p2 master brA
+RC=0
+
+[switch] ip link set p2 up
+RC=0
+
+[client2] ip link set client2-eth0 address 00:00:00:00:00:02
+RC=0
+
+[client2] ip addr add 10.0.1.3/24 dev client2-eth0
+RC=0
+
+[client2] ip link set client2-eth0 up
+RC=0
+
+[switch] ethtool -K p2 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[client2] ethtool -K client2-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[server1] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[server1] ip link set lo up
+RC=0
+
+[switch] ip link add p3 type veth peer name server1-eth0 netns 2715383
+RC=0
+
+[switch] ip link set p3 master brA
+RC=0
+
+[switch] ip link set p3 up
+RC=0
+
+[server1] ip link set server1-eth0 address 00:00:00:00:00:03
+RC=0
+
+[server1] ip addr add 10.0.1.10/24 dev server1-eth0
+RC=0
+
+[server1] ip link set server1-eth0 up
+RC=0
+
+[switch] ethtool -K p3 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[server1] ethtool -K server1-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[server2] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[server2] ip link set lo up
+RC=0
+
+[switch] ip link add p4 type veth peer name server2-eth0 netns 2715394
+RC=0
+
+[switch] ip link set p4 master brA
+RC=0
+
+[switch] ip link set p4 up
+RC=0
+
+[server2] ip link set server2-eth0 address 00:00:00:00:00:04
+RC=0
+
+[server2] ip addr add 10.0.1.11/24 dev server2-eth0
+RC=0
+
+[server2] ip link set server2-eth0 up
+RC=0
+
+[switch] ethtool -K p4 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[server2] ethtool -K server2-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[server1] ping -n -c 4 -i 0.2 -W 1 10.0.1.2
+PING 10.0.1.2 (10.0.1.2) 56(84) bytes of data.
+64 bytes from 10.0.1.2: icmp_seq=1 ttl=64 time=0.055 ms
+64 bytes from 10.0.1.2: icmp_seq=2 ttl=64 time=0.042 ms
+64 bytes from 10.0.1.2: icmp_seq=3 ttl=64 time=0.037 ms
+64 bytes from 10.0.1.2: icmp_seq=4 ttl=64 time=0.034 ms
+
+--- 10.0.1.2 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 618ms
+rtt min/avg/max/mdev = 0.034/0.042/0.055/0.008 ms
+RC=0
+
+[client1] ip neigh flush all
+RC=0
+
+[client1] ip neigh
+RC=0
+
+[client1] ping -n -c 1 -i 0.2 -W 1 10.0.1.3
+PING 10.0.1.3 (10.0.1.3) 56(84) bytes of data.
+64 bytes from 10.0.1.3: icmp_seq=1 ttl=64 time=0.052 ms
+
+--- 10.0.1.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.052/0.052/0.052/0.000 ms
+RC=0
+
+[client1] ip neigh
+10.0.1.3 dev client1-eth0 lladdr 00:00:00:00:00:02 REACHABLE 
+RC=0
+
+[client1] ping -n -c 1 -i 0.2 -W 1 10.0.1.3
+PING 10.0.1.3 (10.0.1.3) 56(84) bytes of data.
+64 bytes from 10.0.1.3: icmp_seq=1 ttl=64 time=0.029 ms
+
+--- 10.0.1.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.029/0.029/0.029/0.000 ms
+RC=0
+
+[client1] ip neigh
+10.0.1.3 dev client1-eth0 lladdr 00:00:00:00:00:02 REACHABLE 
+RC=0
+
+[client1] ip neigh flush all
+RC=0
+
+[client2] ip neigh flush all
+RC=0
+
+[server1] ip neigh flush all
+RC=0
+
+[server2] ip neigh flush all
+RC=0
+
+[switch] bridge fdb flush dev p1 master dynamic
+RC=0
+
+[switch] bridge fdb flush dev p2 master dynamic
+RC=0
+
+[switch] bridge fdb flush dev p3 master dynamic
+RC=0
+
+[switch] bridge fdb flush dev p4 master dynamic
+RC=0
+
+[switch] bridge -j fdb show br brA
+[{"mac":"33:33:00:00:00:01","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:6a","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"33:33:00:00:00:6a","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"36:a9:92:65:54:45","ifname":"p1","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"36:a9:92:65:54:45","ifname":"p1","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p1","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p1","flags":["self"],"state":"permanent"},{"mac":"e6:d7:41:90:76:52","ifname":"p2","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"e6:d7:41:90:76:52","ifname":"p2","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p2","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p2","flags":["self"],"state":"permanent"},{"mac":"1a:48:60:f9:ed:f3","ifname":"p3","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"1a:48:60:f9:ed:f3","ifname":"p3","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p3","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p3","flags":["self"],"state":"permanent"},{"mac":"7a:73:18:9e:7f:96","ifname":"p4","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"7a:73:18:9e:7f:96","ifname":"p4","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p4","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p4","flags":["self"],"state":"permanent"}]
+RC=0
+
+[client1] ping -n -c 1 -i 0.2 -W 1 10.0.1.10
+PING 10.0.1.10 (10.0.1.10) 56(84) bytes of data.
+64 bytes from 10.0.1.10: icmp_seq=1 ttl=64 time=0.039 ms
+
+--- 10.0.1.10 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.039/0.039/0.039/0.000 ms
+RC=0
+
+[switch] bridge -j fdb show br brA
+[{"mac":"33:33:00:00:00:01","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:6a","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"33:33:00:00:00:6a","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"00:00:00:00:00:01","ifname":"p1","flags":[],"master":"brA","state":""},{"mac":"36:a9:92:65:54:45","ifname":"p1","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"36:a9:92:65:54:45","ifname":"p1","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p1","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p1","flags":["self"],"state":"permanent"},{"mac":"e6:d7:41:90:76:52","ifname":"p2","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"e6:d7:41:90:76:52","ifname":"p2","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p2","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p2","flags":["self"],"state":"permanent"},{"mac":"00:00:00:00:00:03","ifname":"p3","flags":[],"master":"brA","state":""},{"mac":"1a:48:60:f9:ed:f3","ifname":"p3","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"1a:48:60:f9:ed:f3","ifname":"p3","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p3","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p3","flags":["self"],"state":"permanent"},{"mac":"7a:73:18:9e:7f:96","ifname":"p4","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"7a:73:18:9e:7f:96","ifname":"p4","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p4","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p4","flags":["self"],"state":"permanent"}]
+RC=0
+
+[client2] ping -n -c 1 -i 0.2 -W 1 10.0.1.10
+PING 10.0.1.10 (10.0.1.10) 56(84) bytes of data.
+64 bytes from 10.0.1.10: icmp_seq=1 ttl=64 time=0.058 ms
+
+--- 10.0.1.10 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.058/0.058/0.058/0.000 ms
+RC=0
+
+[switch] bridge -j fdb show br brA
+[{"mac":"33:33:00:00:00:01","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:6a","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"33:33:00:00:00:6a","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"brA","flags":["self"],"state":"permanent"},{"mac":"00:00:00:00:00:01","ifname":"p1","flags":[],"master":"brA","state":""},{"mac":"36:a9:92:65:54:45","ifname":"p1","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"36:a9:92:65:54:45","ifname":"p1","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p1","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p1","flags":["self"],"state":"permanent"},{"mac":"00:00:00:00:00:02","ifname":"p2","flags":[],"master":"brA","state":""},{"mac":"e6:d7:41:90:76:52","ifname":"p2","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"e6:d7:41:90:76:52","ifname":"p2","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p2","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p2","flags":["self"],"state":"permanent"},{"mac":"00:00:00:00:00:03","ifname":"p3","flags":[],"master":"brA","state":""},{"mac":"1a:48:60:f9:ed:f3","ifname":"p3","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"1a:48:60:f9:ed:f3","ifname":"p3","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p3","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p3","flags":["self"],"state":"permanent"},{"mac":"7a:73:18:9e:7f:96","ifname":"p4","vlan":1,"flags":[],"master":"brA","state":"permanent"},{"mac":"7a:73:18:9e:7f:96","ifname":"p4","flags":[],"master":"brA","state":"permanent"},{"mac":"33:33:00:00:00:01","ifname":"p4","flags":["self"],"state":"permanent"},{"mac":"01:00:5e:00:00:01","ifname":"p4","flags":["self"],"state":"permanent"}]
+RC=0
+
+[switch] ip link add brB type bridge stp_state 0 forward_delay 0
+RC=0
+
+[switch] ip link set brB up
+RC=0
+
+[switch] ip link set p3 master brB
+RC=0
+
+[server1] ip addr flush dev server1-eth0
+RC=0
+
+[server1] ip addr add 10.0.2.10/24 dev server1-eth0
+RC=0
+
+[switch] ip link set p4 master brB
+RC=0
+
+[server2] ip addr flush dev server2-eth0
+RC=0
+
+[server2] ip addr add 10.0.2.11/24 dev server2-eth0
+RC=0
+
+[router] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[router] ip link set lo up
+RC=0
+
+[switch] ip link add prA type veth peer name router-A netns 2715451
+RC=0
+
+[switch] ip link set prA master brA
+RC=0
+
+[switch] ip link set prA up
+RC=0
+
+[router] ip link set router-A address 02:00:00:00:01:01
+RC=0
+
+[router] ip addr add 10.0.1.1/24 dev router-A
+RC=0
+
+[router] ip link set router-A up
+RC=0
+
+[switch] ethtool -K prA tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[router] ethtool -K router-A tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[switch] ip link add prB type veth peer name router-B netns 2715451
+RC=0
+
+[switch] ip link set prB master brB
+RC=0
+
+[switch] ip link set prB up
+RC=0
+
+[router] ip link set router-B address 02:00:00:00:02:01
+RC=0
+
+[router] ip addr add 10.0.2.1/24 dev router-B
+RC=0
+
+[router] ip link set router-B up
+RC=0
+
+[switch] ethtool -K prB tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[router] ethtool -K router-B tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[router] sysctl -qw net.ipv4.ip_forward=1
+RC=0
+
+[client1] ip route add default via 10.0.1.1
+RC=0
+
+[client1] ip neigh flush all
+RC=0
+
+[client2] ip route add default via 10.0.1.1
+RC=0
+
+[client2] ip neigh flush all
+RC=0
+
+[server1] ip route add default via 10.0.2.1
+RC=0
+
+[server1] ip neigh flush all
+RC=0
+
+[server2] ip route add default via 10.0.2.1
+RC=0
+
+[server2] ip neigh flush all
+RC=0
+
+[client1] ping -n -c 1 -i 0.2 -W 1 10.0.2.10
+PING 10.0.2.10 (10.0.2.10) 56(84) bytes of data.
+64 bytes from 10.0.2.10: icmp_seq=1 ttl=63 time=0.056 ms
+
+--- 10.0.2.10 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.056/0.056/0.056/0.000 ms
+RC=0
+
+[client1] ping -n -c 1 -i 0.2 -W 1 10.0.1.3
+PING 10.0.1.3 (10.0.1.3) 56(84) bytes of data.
+64 bytes from 10.0.1.3: icmp_seq=1 ttl=64 time=0.059 ms
+
+--- 10.0.1.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.059/0.059/0.059/0.000 ms
+RC=0

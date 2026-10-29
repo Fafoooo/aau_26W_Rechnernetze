@@ -1,0 +1,26 @@
+{
+  "captures": {
+    "81_ethernet.pcap": 10,
+    "82_erster_ping.pcap": 4,
+    "82_zweiter_ping.pcap": 2,
+    "83_ping1.pcap": 5,
+    "83_ping2.pcap": 4,
+    "83_server2_zeuge.pcap": 2,
+    "84_lanA.pcap": 4,
+    "84_lanB.pcap": 4,
+    "84_lokal.pcap": 4,
+    "85_lanA.pcap": 10,
+    "85_lanB.pcap": 10
+  },
+  "total_frames": 59,
+  "tests_exitcode": 0,
+  "tests": 13,
+  "source_explanation_rows": {
+    "messen.py": 275,
+    "pcap.py": 136,
+    "test_nachweise.py": 160
+  },
+  "own_worker_processes_left": 0,
+  "own_lab_interfaces_in_outer_namespace": 0,
+  "source_and_pcap_hashes_unchanged_after_offline_analysis": true
+}

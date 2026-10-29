@@ -1,0 +1,21 @@
+Befehl: /usr/bin/python3 -B -m unittest -v test_nachweise
+test_byteorders_and_timestamp_magics (test_nachweise.EvidenceTests.test_byteorders_and_timestamp_magics) ... ok
+test_capture_readiness_idle_eof_and_timeout (test_nachweise.EvidenceTests.test_capture_readiness_idle_eof_and_timeout) ... ok
+test_cleanup_escalation_and_nonzero_ping (test_nachweise.EvidenceTests.test_cleanup_escalation_and_nonzero_ping) ... ok
+test_complete_saved_analysis (test_nachweise.EvidenceTests.test_complete_saved_analysis) ... ok
+test_corrupt_pcap_and_packet_lengths (test_nachweise.EvidenceTests.test_corrupt_pcap_and_packet_lengths) ... ok
+test_echo_negative_attribution_ttl_mac_checksum (test_nachweise.EvidenceTests.test_echo_negative_attribution_ttl_mac_checksum) ... ok
+test_isolation_failure_and_exclusive_output (test_nachweise.EvidenceTests.test_isolation_failure_and_exclusive_output) ... ok
+test_line_explanations (test_nachweise.EvidenceTests.test_line_explanations) ... ok
+test_pcaps_readonly_and_independent_decoder (test_nachweise.EvidenceTests.test_pcaps_readonly_and_independent_decoder) ... ok
+test_saved_neighbours_and_learning (test_nachweise.EvidenceTests.test_saved_neighbours_and_learning) ... ok
+test_tcp_negative_missing_fin_ack_and_payload (test_nachweise.EvidenceTests.test_tcp_negative_missing_fin_ack_and_payload) ... ok
+test_tcp_stream_reordering_retransmission_and_gaps (test_nachweise.EvidenceTests.test_tcp_stream_reordering_retransmission_and_gaps) ... ok
+test_templates_unchanged (test_nachweise.EvidenceTests.test_templates_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.040s
+
+OK
+
+Exitcode: 0

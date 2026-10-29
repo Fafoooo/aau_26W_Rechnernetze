@@ -1,0 +1,57 @@
+$ python3 -B test_nachweise.py
+test_byteorders_and_timestamp_magics (__main__.EvidenceTests.test_byteorders_and_timestamp_magics) ... ok
+test_capture_readiness_idle_eof_and_timeout (__main__.EvidenceTests.test_capture_readiness_idle_eof_and_timeout) ... ok
+test_cleanup_escalation_and_nonzero_ping (__main__.EvidenceTests.test_cleanup_escalation_and_nonzero_ping) ... ok
+test_complete_saved_analysis (__main__.EvidenceTests.test_complete_saved_analysis) ... ok
+test_corrupt_pcap_and_packet_lengths (__main__.EvidenceTests.test_corrupt_pcap_and_packet_lengths) ... ok
+test_echo_negative_attribution_ttl_mac_checksum (__main__.EvidenceTests.test_echo_negative_attribution_ttl_mac_checksum) ... ok
+test_isolation_failure_and_exclusive_output (__main__.EvidenceTests.test_isolation_failure_and_exclusive_output) ... ok
+test_line_explanations (__main__.EvidenceTests.test_line_explanations) ... ok
+test_pcaps_readonly_and_independent_decoder (__main__.EvidenceTests.test_pcaps_readonly_and_independent_decoder) ... ok
+test_saved_neighbours_and_learning (__main__.EvidenceTests.test_saved_neighbours_and_learning) ... ok
+test_tcp_negative_missing_fin_ack_and_payload (__main__.EvidenceTests.test_tcp_negative_missing_fin_ack_and_payload) ... ok
+test_tcp_stream_reordering_retransmission_and_gaps (__main__.EvidenceTests.test_tcp_stream_reordering_retransmission_and_gaps) ... ok
+test_templates_unchanged (__main__.EvidenceTests.test_templates_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.035s
+
+OK
+
+Exitcode: 0
+
+$ python3 -B test_cli_lab.py
+test_address_plan (__main__.Tests.test_address_plan) ... ok
+test_constructor_is_deferred (__main__.Tests.test_constructor_is_deferred) ... ok
+test_failure_cleanup (__main__.Tests.test_failure_cleanup) ... ok
+test_five_real_offline_clis (__main__.Tests.test_five_real_offline_clis) ... ok
+test_successful_model_and_routes (__main__.Tests.test_successful_model_and_routes) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.543s
+
+OK
+
+Exitcode: 0
+
+$ python3 -B <unabhaengiger Pruefer>
+EXPLANATIONS VERIFIED: {'auswertung.py': 21, 'ue8.1/auswerten.py': 10, 'ue8.2/auswerten.py': 10, 'ue8.3/auswerten.py': 10, 'ue8.4/auswerten.py': 10, 'ue8.5/auswerten.py': 10, 'ue8.4/lab.py': 59, 'test_cli_lab.py': 104} total 234
+NEGATIVE CONTROL REJECTED: missing row
+NEGATIVE CONTROL REJECTED: duplicate row
+NEGATIVE CONTROL REJECTED: whitespace change
+INDEPENDENT PCAP COUNTS: {'81_ethernet.pcap': 10, '82_erster_ping.pcap': 4, '82_zweiter_ping.pcap': 2, '83_ping1.pcap': 5, '83_ping2.pcap': 4, '83_server2_zeuge.pcap': 2, '84_lanA.pcap': 4, '84_lanB.pcap': 4, '84_lokal.pcap': 4, '85_lanA.pcap': 10, '85_lanB.pcap': 10}
+ROUTED REPLY MACS: LAN B server1 -> router-B; LAN A router-A -> client1
+HTTP/TCP INDEPENDENTLY VERIFIED: 3-way handshake, 63 request bytes, 148 response bytes, Content-Length/body 49, both FIN acknowledgements, no RST, all IP/ICMP/TCP checksums
+python3 -B messen.py --analyse: identical to saved analysis
+python3 -B ue8.1/auswerten.py --belege nachweise/run01: OK
+python3 -B ue8.2/auswerten.py --belege nachweise/run01: OK
+python3 -B ue8.3/auswerten.py --belege nachweise/run01: OK
+python3 -B ue8.4/auswerten.py --belege nachweise/run01: OK
+python3 -B ue8.5/auswerten.py --belege nachweise/run01: OK
+LOCAL MARKDOWN LINKS VERIFIED: 43
+PROTECTED SOURCE/EVIDENCE HASHES UNCHANGED: 56
+ALL INDEPENDENT CHECKS PASSED
+
+Exitcode: 0
+
+Abschluss: 11 eigene Python-Dateien mit KI-Kennzeichnung; 11 echte PCAPs, 59 Frames; keine Quell-/PCAP-Aenderungen durch Offline-Tests; keine Build-/Cache-Dateien.
