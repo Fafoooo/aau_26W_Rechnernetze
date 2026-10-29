@@ -1,0 +1,98 @@
+{
+  "original": {
+    "client": {
+      "sent": 10,
+      "received": 10,
+      "min_ms": 60.234,
+      "avg_ms": 60.441,
+      "max_ms": 60.746,
+      "mdev_ms": 0.161
+    },
+    "server": {
+      "sent": 10,
+      "received": 10,
+      "min_ms": 60.088,
+      "avg_ms": 60.213,
+      "max_ms": 60.407,
+      "mdev_ms": 0.113
+    }
+  },
+  "provenance": "Linux-Network-Namespaces + veth + TC/Netem; NICHT Mininet/OVS",
+  "budget_ms": {
+    "A": 14,
+    "B": 124
+  },
+  "A": {
+    "client": {
+      "sent": 10,
+      "received": 10,
+      "min_ms": 14.085,
+      "avg_ms": 14.577,
+      "max_ms": 15.089,
+      "mdev_ms": 0.405
+    },
+    "server": {
+      "sent": 10,
+      "received": 10,
+      "min_ms": 14.079,
+      "avg_ms": 14.505,
+      "max_ms": 15.197,
+      "mdev_ms": 0.327
+    }
+  },
+  "B": {
+    "client": {
+      "sent": 10,
+      "received": 10,
+      "min_ms": 124.082,
+      "avg_ms": 124.557,
+      "max_ms": 125.446,
+      "mdev_ms": 0.407
+    },
+    "server": {
+      "sent": 10,
+      "received": 10,
+      "min_ms": 124.482,
+      "avg_ms": 124.811,
+      "max_ms": 125.116,
+      "mdev_ms": 0.227
+    }
+  },
+  "fault": {
+    "frames": [
+      {
+        "frame": 1,
+        "src": "10.0.1.2",
+        "dst": "10.0.2.2",
+        "type": 8,
+        "code": 0
+      },
+      {
+        "frame": 2,
+        "src": "10.0.13.2",
+        "dst": "10.0.1.2",
+        "type": 3,
+        "code": 0,
+        "quoted_dst": "10.0.2.2"
+      },
+      {
+        "frame": 3,
+        "src": "10.0.1.2",
+        "dst": "10.0.2.2",
+        "type": 8,
+        "code": 0
+      },
+      {
+        "frame": 4,
+        "src": "10.0.13.2",
+        "dst": "10.0.1.2",
+        "type": 3,
+        "code": 0,
+        "quoted_dst": "10.0.2.2"
+      }
+    ],
+    "requests": 2,
+    "network_unreachable": 2
+  },
+  "cleanup": "Alle eigenen Namespace-Halter beendet; private veth und qdisc verschwinden mit ihren Namespaces."
+}

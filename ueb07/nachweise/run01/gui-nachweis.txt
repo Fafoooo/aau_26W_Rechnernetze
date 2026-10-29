@@ -1,0 +1,6 @@
+Echte Wireshark-GUI unter eigenem Xvfb.
+Datei: fault.pcap
+Displayfilter: icmp.type == 3
+Ausgewählt: Frame 2
+Fenstertitel: fault.pcap
+Screenshot: wireshark-fehler.png

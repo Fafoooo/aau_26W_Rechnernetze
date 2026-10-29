@@ -1,0 +1,24 @@
+Unprivilegierter Testlauf; keine Netzänderungen.
+test_all_four_pcap_magics (__main__.PcapTests.test_all_four_pcap_magics) ... ok
+test_bad_ip_header_bytes (__main__.PcapTests.test_bad_ip_header_bytes) ... ok
+test_claimed_quoted_options_must_be_present (__main__.PcapTests.test_claimed_quoted_options_must_be_present) ... ok
+test_duplicate_errors_do_not_cover_both_requests (__main__.PcapTests.test_duplicate_errors_do_not_cover_both_requests) ... ok
+test_duplicate_request_keys_even_with_matching_errors (__main__.PcapTests.test_duplicate_request_keys_even_with_matching_errors) ... ok
+test_error_for_unknown_id_or_sequence (__main__.PcapTests.test_error_for_unknown_id_or_sequence) ... ok
+test_invalid_global_header_bytes (__main__.PcapTests.test_invalid_global_header_bytes) ... ok
+test_minimum_quote_is_valid_but_seven_echo_bytes_are_not (__main__.PcapTests.test_minimum_quote_is_valid_but_seven_echo_bytes_are_not) ... ok
+test_quoted_options_shift_echo_header (__main__.PcapTests.test_quoted_options_shift_echo_header) ... ok
+test_real_capture_and_unchanged_result_shape (__main__.PcapTests.test_real_capture_and_unchanged_result_shape) ... ok
+test_truncated_records_and_packets (__main__.PcapTests.test_truncated_records_and_packets) ... ok
+test_wrong_quoted_echo_type_or_code (__main__.PcapTests.test_wrong_quoted_echo_type_or_code) ... ok
+test_wrong_quoted_protocol (__main__.PcapTests.test_wrong_quoted_protocol) ... ok
+test_eof_is_not_readiness (__main__.ReadinessTests.test_eof_is_not_readiness) ... ok
+test_idle_and_capturing_message_are_not_readiness (__main__.ReadinessTests.test_idle_and_capturing_message_are_not_readiness) ... ok
+test_idle_only_fails_at_full_deadline (__main__.ReadinessTests.test_idle_only_fails_at_full_deadline) ... ok
+test_readiness_marker_can_span_reads (__main__.ReadinessTests.test_readiness_marker_can_span_reads) ... ok
+test_select_timeout_is_bounded_by_remaining_time (__main__.ReadinessTests.test_select_timeout_is_bounded_by_remaining_time) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.023s
+
+OK

@@ -1,0 +1,8 @@
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+r3-eth0@if15     UP             10.0.13.2/30 
+r3-eth1@if16     UP             10.0.23.1/30 
+10.0.1.0/24 via 10.0.13.1 dev r3-eth0 
+10.0.13.0/30 dev r3-eth0 proto kernel scope link src 10.0.13.2 
+10.0.23.0/30 dev r3-eth1 proto kernel scope link src 10.0.23.1 
+$ ip route get 10.0.2.2
+RTNETLINK answers: Network is unreachable

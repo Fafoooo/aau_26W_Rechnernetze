@@ -1,0 +1,36 @@
+{
+  "frames": [
+    {
+      "frame": 1,
+      "src": "10.0.1.2",
+      "dst": "10.0.2.2",
+      "type": 8,
+      "code": 0
+    },
+    {
+      "frame": 2,
+      "src": "10.0.13.2",
+      "dst": "10.0.1.2",
+      "type": 3,
+      "code": 0,
+      "quoted_dst": "10.0.2.2"
+    },
+    {
+      "frame": 3,
+      "src": "10.0.1.2",
+      "dst": "10.0.2.2",
+      "type": 8,
+      "code": 0
+    },
+    {
+      "frame": 4,
+      "src": "10.0.13.2",
+      "dst": "10.0.1.2",
+      "type": 3,
+      "code": 0,
+      "quoted_dst": "10.0.2.2"
+    }
+  ],
+  "requests": 2,
+  "network_unreachable": 2
+}

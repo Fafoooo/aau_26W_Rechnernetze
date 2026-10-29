@@ -1,0 +1,30 @@
+Unprivilegierter Testlauf; keine Netzänderungen.
+SYNTHETISCHE Tests: keine Mininet-Ausführung, keine echten Pings oder RTTs.
+test_checked_reports_stderr (__main__.ControlTests.test_checked_reports_stderr) ... ok
+test_configuration_and_path_round_trip (__main__.ControlTests.test_configuration_and_path_round_trip) ... ok
+test_failed_fault_command_does_not_change_flag (__main__.ControlTests.test_failed_fault_command_does_not_change_flag) ... ok
+test_fault_delete_restore_and_idempotency (__main__.ControlTests.test_fault_delete_restore_and_idempotency) ... ok
+test_initial_failure_removes_partial_route (__main__.ControlTests.test_initial_failure_removes_partial_route) ... ok
+test_invalid_path_has_no_side_effects (__main__.ControlTests.test_invalid_path_has_no_side_effects) ... ok
+test_ping_uses_exit_status_not_loss_substring (__main__.ControlTests.test_ping_uses_exit_status_not_loss_substring) ... ok
+test_reconfigure_restores_fault_flag_and_route (__main__.ControlTests.test_reconfigure_restores_fault_flag_and_route) ... ok
+test_rollback_failure_marks_state_unknown (__main__.ControlTests.test_rollback_failure_marks_state_unknown) ... ok
+test_spawn_error_also_rolls_back (__main__.ControlTests.test_spawn_error_also_rolls_back) ... ok
+test_switch_rolls_back_after_second_router_failure (__main__.ControlTests.test_switch_rolls_back_after_second_router_failure) ... ok
+test_every_nonempty_source_line_is_explained_exactly_once (__main__.DocumentationTests.test_every_nonempty_source_line_is_explained_exactly_once) ... ok
+test_supplied_files_equal_original_archive (__main__.DocumentationTests.test_supplied_files_equal_original_archive) ... ok
+test_original_addresses_and_new_links (__main__.ModelTests.test_original_addresses_and_new_links) ... ok
+test_router_forwarding_config_and_failure (__main__.ModelTests.test_router_forwarding_config_and_failure) ... ok
+test_symmetric_model_walk_and_delay_budget (__main__.ModelTests.test_symmetric_model_walk_and_delay_budget) ... ok
+test_topology_calls (__main__.ModelTests.test_topology_calls) ... ok
+test_unique_interfaces_and_distinct_routed_subnets (__main__.ModelTests.test_unique_interfaces_and_distinct_routed_subnets) ... ok
+test_build_exception_still_stops_without_starting (__main__.StartupTests.test_build_exception_still_stops_without_starting) ... ok
+test_check_only_starts_stops_both_paths (__main__.StartupTests.test_check_only_starts_stops_both_paths) ... ok
+test_cli_commands_and_error_messages (__main__.StartupTests.test_cli_commands_and_error_messages) ... ok
+test_ping_failure_is_nonzero_and_cleans_up (__main__.StartupTests.test_ping_failure_is_nonzero_and_cleans_up) ... ok
+test_start_exception_still_stops (__main__.StartupTests.test_start_exception_still_stops) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.011s
+
+OK

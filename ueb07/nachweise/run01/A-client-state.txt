@@ -1,0 +1,22 @@
+$ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+client-eth0@if8  UP             10.0.1.2/24 
+$ ip route
+default via 10.0.1.1 dev client-eth0 
+10.0.1.0/24 dev client-eth0 proto kernel scope link src 10.0.1.2 
+$ ip rule
+0:	from all lookup local
+32766:	from all lookup main
+32767:	from all lookup default
+$ sysctl net.ipv4.ip_forward
+net.ipv4.ip_forward = 0
+$ tc -s qdisc show
+qdisc noqueue 0: dev lo root refcnt 2 
+ Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc netem 8033: dev client-eth0 root refcnt 17 limit 1000 delay 1ms seed 16983238788210712364
+ Sent 180 bytes 2 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+$ ip route get 10.0.2.2
+10.0.2.2 via 10.0.1.1 dev client-eth0 src 10.0.1.2 uid 0 
+    cache 

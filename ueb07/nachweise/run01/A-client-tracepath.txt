@@ -1,0 +1,6 @@
+ 1?: [LOCALHOST]                      pmtu 1500
+ 1:  10.0.1.1                                              2.368ms 
+ 1:  10.0.1.1                                              2.037ms 
+ 2:  10.0.12.2                                            12.054ms 
+ 3:  10.0.2.2                                             14.161ms reached
+     Resume: pmtu 1500 hops 3 back 3 

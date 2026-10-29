@@ -1,0 +1,25 @@
+REFERENCE ONLY – starting configuration.
+
+Base topology:
+
+    client -- r1 -- r2 -- server
+
+Initial path:
+
+    client -> r1 -> r2 -> server
+
+client:
+    ip route replace default via 10.0.1.1
+
+r1:
+    ip route replace 10.0.2.0/24 via 10.0.12.2
+
+r2:
+    ip route replace 10.0.1.0/24 via 10.0.12.1
+
+server:
+    ip route replace default via 10.0.2.1
+
+The alternative router/path is intentionally NOT configured here.
+Students must add the new router, links, interfaces, addressing,
+forwarding, and routing as part of the exercise.
