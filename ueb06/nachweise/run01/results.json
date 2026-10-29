@@ -1,0 +1,19 @@
+[
+  {
+    "fall": "basis",
+    "routing": "3/3 vor und nach Wiederherstellung; 0/3 ohne Routen",
+    "tcp_clients": [
+      "client"
+    ],
+    "messung": "Linux-Network-Namespaces, Linux-Bridge; NICHT Mininet/OVS; keine TC-Verzögerung"
+  },
+  {
+    "fall": "erweitert",
+    "routing": "3/3 vor und nach Wiederherstellung; 0/3 ohne Routen",
+    "tcp_clients": [
+      "client",
+      "client2"
+    ],
+    "messung": "Linux-Network-Namespaces, Linux-Bridge; NICHT Mininet/OVS; keine TC-Verzögerung"
+  }
+]

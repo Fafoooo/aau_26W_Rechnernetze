@@ -1,0 +1,44 @@
+ECHTES AUSFÜHRUNGSPROTOKOLL der Python-Tests, 2026-10-29.
+Keine Mininet-Messung. JSON-Fixtures und NodeDouble sind ausdrücklich synthetisch.
+
+$ python3 ueb06/ue6.1/adressen.py
+Quelle: deterministischer Sollplan aus Angabe/start_lab.py; KEINE Messung.
+| Hostname/Knoten | Interface | IPv4-Adresse | Präfix | Netzwerk |
+|---|---|---|---|---|
+| client | client-eth0 | 10.0.1.2 | /24 | 10.0.1.0/24 |
+| r1 | r1-eth0 | 10.0.1.1 | /24 | 10.0.1.0/24 |
+| r1 | r1-eth1 | 10.0.12.1 | /30 | 10.0.12.0/30 |
+| r2 | r2-eth0 | 10.0.12.2 | /30 | 10.0.12.0/30 |
+| r2 | r2-eth1 | 10.0.2.1 | /24 | 10.0.2.0/24 |
+| server | server-eth0 | 10.0.2.2 | /24 | 10.0.2.0/24 |
+
+Tatsächlicher Exitstatus: 0
+
+$ python3 ueb06/ue6.1/adressen.py --test
+Selbsttest: Plan, Präfix, IPv4-Filter, leeres Interface und Loopback OK.
+
+Tatsächlicher Exitstatus: 0
+
+$ python3 ueb06/ue6.1/adressen.py --host r1 --json <synthetische-ip-json-Datei>
+Quelle: übergebenes ip-JSON für r1; Herkunft vom Aufnehmenden zu prüfen.
+| Hostname/Knoten | Interface | IPv4-Adresse | Präfix | Netzwerk |
+|---|---|---|---|---|
+| r1 | lo | 127.0.0.1 | /8 | 127.0.0.0/8 |
+| r1 | r1-eth1 | 10.0.12.1 | /30 | 10.0.12.0/30 |
+
+Tatsächlicher Exitstatus: 0
+
+$ python3 ueb06/ue6.1/adressen.py --host r1 --json -
+Quelle: übergebenes ip-JSON für r1; Herkunft vom Aufnehmenden zu prüfen.
+| Hostname/Knoten | Interface | IPv4-Adresse | Präfix | Netzwerk |
+|---|---|---|---|---|
+| r1 | lo | 127.0.0.1 | /8 | 127.0.0.0/8 |
+| r1 | r1-eth1 | 10.0.12.1 | /30 | 10.0.12.0/30 |
+
+Tatsächlicher Exitstatus: 0
+
+$ python3 ueb06/ue6.1/adressen.py --json -
+usage: adressen.py [-h] [--json DATEI] [--host {client,r1,r2,server}] [--test]
+adressen.py: error: --json verlangt --host; der JSON-Inhalt nennt den Mininet-Knoten nicht
+
+Tatsächlicher Exitstatus: 2

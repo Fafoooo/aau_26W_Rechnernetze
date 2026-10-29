@@ -1,0 +1,15 @@
+REFERENCE ONLY – do not blindly paste all commands.
+
+Base topology:
+
+client:
+    ip route replace default via 10.0.1.1
+
+r1:
+    ip route replace 10.0.2.0/24 via 10.0.12.2
+
+r2:
+    ip route replace 10.0.1.0/24 via 10.0.12.1
+
+server:
+    ip route replace default via 10.0.2.1

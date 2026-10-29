@@ -1,0 +1,34 @@
+ECHTES AUSFÜHRUNGSPROTOKOLL der Python-Tests, 2026-10-29.
+Keine Mininet-Messung. JSON-Fixtures und NodeDouble sind ausdrücklich synthetisch.
+
+$ python3 ueb06/ue6.2/routing.py
+SOLLPLAN, kein Livebefund. Haupttabelle, keine Policy-Regeln/ECMP/NAT.
+
+r1: Zielpräfix | Next Hop | Interface
+10.0.1.0/24 | direkt: Ziel-IP | r1-eth0
+10.0.12.0/30 | direkt: Ziel-IP | r1-eth1
+10.0.2.0/24 | 10.0.12.2 | r1-eth1
+
+r2: Zielpräfix | Next Hop | Interface
+10.0.12.0/30 | direkt: Ziel-IP | r2-eth0
+10.0.2.0/24 | direkt: Ziel-IP | r2-eth1
+10.0.1.0/24 | 10.0.12.1 | r2-eth0
+
+10.0.1.2 -> 10.0.2.2:
+client: 0.0.0.0/0, client-eth0, ARP-Nachbar 10.0.1.1
+r1: 10.0.2.0/24, r1-eth1, ARP-Nachbar 10.0.12.2
+r2: 10.0.2.0/24, r2-eth1, ARP-Nachbar 10.0.2.2
+server: lokale Zustellung an 10.0.2.2
+
+10.0.2.2 -> 10.0.1.2:
+server: 0.0.0.0/0, server-eth0, ARP-Nachbar 10.0.2.1
+r2: 10.0.1.0/24, r2-eth0, ARP-Nachbar 10.0.12.1
+r1: 10.0.1.0/24, r1-eth0, ARP-Nachbar 10.0.1.2
+client: lokale Zustellung an 10.0.1.2
+
+Tatsächlicher Exitstatus: 0
+
+$ python3 ueb06/ue6.2/routing.py --test
+Selbsttest: Hin-/Rückweg, /32 vor /24 vor /0, fehlende Route, Forwarding OK.
+
+Tatsächlicher Exitstatus: 0

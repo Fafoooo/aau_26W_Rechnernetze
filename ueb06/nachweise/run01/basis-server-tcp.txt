@@ -1,0 +1,5 @@
+Listening on 10.0.2.2:5000
+Connection from ('10.0.1.2', 35626)
+Received 21 bytes
+Received 21 bytes
+Received 21 bytes

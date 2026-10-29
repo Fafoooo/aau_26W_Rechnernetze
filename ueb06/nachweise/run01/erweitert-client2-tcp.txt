@@ -1,0 +1,4 @@
+Connected to 10.0.2.2:5000
+Reply: b'Network layer test 1\n'
+Reply: b'Network layer test 2\n'
+Reply: b'Network layer test 3\n'
