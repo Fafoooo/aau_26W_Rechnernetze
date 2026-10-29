@@ -1,0 +1,177 @@
+{
+  "provenance": "Echte Linux-Netzwerk-Namespaces/veth/Linux Bridges; NICHT Mininet/OVS; keine künstlichen Pakete",
+  "initial": {
+    "client1": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nclient1-eth0@if4 UP             10.10.1.10/24 \n",
+      "route": "default via 10.10.1.1 dev client1-eth0 \n10.10.1.0/24 dev client1-eth0 proto kernel scope link src 10.10.1.10 \n",
+      "neigh": "",
+      "route_get": "10.10.2.10 via 10.10.1.1 dev client1-eth0 src 10.10.1.10 uid 0 \n    cache \n"
+    },
+    "client2": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nclient2-eth0@if5 UP             10.10.1.11/24 \n",
+      "route": "default via 10.10.1.1 dev client2-eth0 \n10.10.1.0/24 dev client2-eth0 proto kernel scope link src 10.10.1.11 \n",
+      "neigh": "",
+      "route_get": "10.10.2.10 via 10.10.1.1 dev client2-eth0 src 10.10.1.11 uid 0 \n    cache \n"
+    },
+    "server": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nserver-eth0@if6  UP             10.10.2.10/24 \n",
+      "route": "default via 10.10.2.254 dev server-eth0 \n10.10.2.0/24 dev server-eth0 proto kernel scope link src 10.10.2.10 \n",
+      "neigh": "",
+      "route_get": "10.10.1.10 via 10.10.2.254 dev server-eth0 src 10.10.2.10 uid 0 \n    cache \n"
+    },
+    "router": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nrouter-eth0@if7  UP             10.10.1.1/24 \nrouter-eth1@if8  UP             10.10.2.1/24 \n",
+      "route": "10.10.1.0/24 dev router-eth0 proto kernel scope link src 10.10.1.1 \n10.10.2.0/24 dev router-eth1 proto kernel scope link src 10.10.2.1 \n",
+      "neigh": "",
+      "route_get": "10.10.2.10 dev router-eth1 src 10.10.2.1 uid 0 \n    cache \n"
+    }
+  },
+  "baseline": {
+    "client1": {
+      "rc": 0,
+      "stdout": "PING 10.10.1.1 (10.10.1.1) 56(84) bytes of data.\n64 bytes from 10.10.1.1: icmp_seq=1 ttl=64 time=0.050 ms\n64 bytes from 10.10.1.1: icmp_seq=2 ttl=64 time=0.029 ms\n64 bytes from 10.10.1.1: icmp_seq=3 ttl=64 time=0.036 ms\n\n--- 10.10.1.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 410ms\nrtt min/avg/max/mdev = 0.029/0.038/0.050/0.008 ms\n",
+      "stderr": ""
+    },
+    "client2": {
+      "rc": 0,
+      "stdout": "PING 10.10.1.1 (10.10.1.1) 56(84) bytes of data.\n64 bytes from 10.10.1.1: icmp_seq=1 ttl=64 time=0.054 ms\n64 bytes from 10.10.1.1: icmp_seq=2 ttl=64 time=0.042 ms\n64 bytes from 10.10.1.1: icmp_seq=3 ttl=64 time=0.035 ms\n\n--- 10.10.1.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 413ms\nrtt min/avg/max/mdev = 0.035/0.043/0.054/0.007 ms\n",
+      "stderr": ""
+    },
+    "router": {
+      "rc": 0,
+      "stdout": "PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.\n64 bytes from 10.10.2.10: icmp_seq=1 ttl=64 time=0.043 ms\n64 bytes from 10.10.2.10: icmp_seq=2 ttl=64 time=0.040 ms\n64 bytes from 10.10.2.10: icmp_seq=3 ttl=64 time=0.027 ms\n\n--- 10.10.2.10 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 413ms\nrtt min/avg/max/mdev = 0.027/0.036/0.043/0.007 ms\n",
+      "stderr": ""
+    },
+    "server": {
+      "rc": 0,
+      "stdout": "PING 10.10.2.1 (10.10.2.1) 56(84) bytes of data.\n64 bytes from 10.10.2.1: icmp_seq=1 ttl=64 time=0.030 ms\n64 bytes from 10.10.2.1: icmp_seq=2 ttl=64 time=0.033 ms\n64 bytes from 10.10.2.1: icmp_seq=3 ttl=64 time=0.050 ms\n\n--- 10.10.2.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 413ms\nrtt min/avg/max/mdev = 0.030/0.037/0.050/0.008 ms\n",
+      "stderr": ""
+    }
+  },
+  "before": {
+    "client1": {
+      "ping": {
+        "rc": 1,
+        "stdout": "PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.\n\n--- 10.10.2.10 ping statistics ---\n3 packets transmitted, 0 received, 100% packet loss, time 414ms\n\n",
+        "stderr": ""
+      },
+      "tcp": {
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<ueb09>/Angabe/tcp_client.py\", line 9, in <module>\n    with socket.create_connection((HOST, PORT), timeout=5) as s:\n         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/socket.py\", line 864, in create_connection\n    raise exceptions[0]\n  File \"/usr/lib/python3.13/socket.py\", line 849, in create_connection\n    sock.connect(sa)\n    ~~~~~~~~~~~~^^^^\nTimeoutError: timed out\n"
+      }
+    },
+    "client2": {
+      "ping": {
+        "rc": 1,
+        "stdout": "PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.\n\n--- 10.10.2.10 ping statistics ---\n3 packets transmitted, 0 received, 100% packet loss, time 412ms\n\n",
+        "stderr": ""
+      },
+      "tcp": {
+        "rc": 1,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"<ueb09>/Angabe/tcp_client.py\", line 9, in <module>\n    with socket.create_connection((HOST, PORT), timeout=5) as s:\n         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/socket.py\", line 864, in create_connection\n    raise exceptions[0]\n  File \"/usr/lib/python3.13/socket.py\", line 849, in create_connection\n    sock.connect(sa)\n    ~~~~~~~~~~~~^^^^\nTimeoutError: timed out\n"
+      }
+    }
+  },
+  "fault_state": {
+    "client1": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nclient1-eth0@if4 UP             10.10.1.10/24 \n",
+      "route": "default via 10.10.1.1 dev client1-eth0 \n10.10.1.0/24 dev client1-eth0 proto kernel scope link src 10.10.1.10 \n",
+      "neigh": "10.10.1.1 dev client1-eth0 lladdr 02:00:00:00:01:01 STALE \n",
+      "route_get": "10.10.2.10 via 10.10.1.1 dev client1-eth0 src 10.10.1.10 uid 0 \n    cache \n"
+    },
+    "client2": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nclient2-eth0@if5 UP             10.10.1.11/24 \n",
+      "route": "default via 10.10.1.1 dev client2-eth0 \n10.10.1.0/24 dev client2-eth0 proto kernel scope link src 10.10.1.11 \n",
+      "neigh": "10.10.1.1 dev client2-eth0 lladdr 02:00:00:00:01:01 REACHABLE \n",
+      "route_get": "10.10.2.10 via 10.10.1.1 dev client2-eth0 src 10.10.1.11 uid 0 \n    cache \n"
+    },
+    "server": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nserver-eth0@if6  UP             10.10.2.10/24 \n",
+      "route": "default via 10.10.2.254 dev server-eth0 \n10.10.2.0/24 dev server-eth0 proto kernel scope link src 10.10.2.10 \n",
+      "neigh": "10.10.2.1 dev server-eth0 lladdr 02:00:00:00:02:01 REACHABLE \n10.10.2.254 dev server-eth0 FAILED \n",
+      "route_get": "10.10.1.10 via 10.10.2.254 dev server-eth0 src 10.10.2.10 uid 0 \n    cache \n"
+    },
+    "router": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nrouter-eth0@if7  UP             10.10.1.1/24 \nrouter-eth1@if8  UP             10.10.2.1/24 \n",
+      "route": "10.10.1.0/24 dev router-eth0 proto kernel scope link src 10.10.1.1 \n10.10.2.0/24 dev router-eth1 proto kernel scope link src 10.10.2.1 \n",
+      "neigh": "10.10.2.10 dev router-eth1 lladdr 02:00:00:00:02:10 STALE \n10.10.1.11 dev router-eth0 lladdr 02:00:00:00:01:11 REACHABLE \n10.10.1.10 dev router-eth0 lladdr 02:00:00:00:01:10 REACHABLE \n",
+      "route_get": "10.10.2.10 dev router-eth1 src 10.10.2.1 uid 0 \n    cache \n"
+    }
+  },
+  "fault_packet_check_before_repair": {
+    "server_arp_wrong_gateway": 12,
+    "arp_reply_wrong_gateway": 0,
+    "server_tcp_replies": 0,
+    "icmp_errors_on_server_interface": [],
+    "syn_clients_reached_server": [
+      "10.10.1.10",
+      "10.10.1.11"
+    ]
+  },
+  "after": {
+    "client1": {
+      "ping": {
+        "rc": 0,
+        "stdout": "PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.\n64 bytes from 10.10.2.10: icmp_seq=1 ttl=63 time=0.037 ms\n64 bytes from 10.10.2.10: icmp_seq=2 ttl=63 time=0.030 ms\n64 bytes from 10.10.2.10: icmp_seq=3 ttl=63 time=0.043 ms\n\n--- 10.10.2.10 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 412ms\nrtt min/avg/max/mdev = 0.030/0.036/0.043/0.005 ms\n",
+        "stderr": ""
+      },
+      "tcp": {
+        "rc": 0,
+        "stdout": "RN-Lab forensic test server\n",
+        "stderr": ""
+      }
+    },
+    "client2": {
+      "ping": {
+        "rc": 0,
+        "stdout": "PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.\n64 bytes from 10.10.2.10: icmp_seq=1 ttl=63 time=0.035 ms\n64 bytes from 10.10.2.10: icmp_seq=2 ttl=63 time=0.057 ms\n64 bytes from 10.10.2.10: icmp_seq=3 ttl=63 time=0.046 ms\n\n--- 10.10.2.10 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 410ms\nrtt min/avg/max/mdev = 0.035/0.046/0.057/0.009 ms\n",
+        "stderr": ""
+      },
+      "tcp": {
+        "rc": 0,
+        "stdout": "RN-Lab forensic test server\n",
+        "stderr": ""
+      }
+    }
+  },
+  "repaired_state": {
+    "client1": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nclient1-eth0@if4 UP             10.10.1.10/24 \n",
+      "route": "default via 10.10.1.1 dev client1-eth0 \n10.10.1.0/24 dev client1-eth0 proto kernel scope link src 10.10.1.10 \n",
+      "neigh": "10.10.1.1 dev client1-eth0 lladdr 02:00:00:00:01:01 STALE \n",
+      "route_get": "10.10.2.10 via 10.10.1.1 dev client1-eth0 src 10.10.1.10 uid 0 \n    cache \n"
+    },
+    "client2": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nclient2-eth0@if5 UP             10.10.1.11/24 \n",
+      "route": "default via 10.10.1.1 dev client2-eth0 \n10.10.1.0/24 dev client2-eth0 proto kernel scope link src 10.10.1.11 \n",
+      "neigh": "10.10.1.1 dev client2-eth0 lladdr 02:00:00:00:01:01 REACHABLE \n",
+      "route_get": "10.10.2.10 via 10.10.1.1 dev client2-eth0 src 10.10.1.11 uid 0 \n    cache \n"
+    },
+    "server": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nserver-eth0@if6  UP             10.10.2.10/24 \n",
+      "route": "default via 10.10.2.1 dev server-eth0 \n10.10.2.0/24 dev server-eth0 proto kernel scope link src 10.10.2.10 \n",
+      "neigh": "10.10.2.1 dev server-eth0 lladdr 02:00:00:00:02:01 STALE \n10.10.2.254 dev server-eth0 FAILED \n",
+      "route_get": "10.10.1.10 via 10.10.2.1 dev server-eth0 src 10.10.2.10 uid 0 \n    cache \n"
+    },
+    "router": {
+      "addr": "lo               UNKNOWN        127.0.0.1/8 \nrouter-eth0@if7  UP             10.10.1.1/24 \nrouter-eth1@if8  UP             10.10.2.1/24 \n",
+      "route": "10.10.1.0/24 dev router-eth0 proto kernel scope link src 10.10.1.1 \n10.10.2.0/24 dev router-eth1 proto kernel scope link src 10.10.2.1 \n",
+      "neigh": "10.10.2.10 dev router-eth1 lladdr 02:00:00:00:02:10 STALE \n10.10.1.11 dev router-eth0 lladdr 02:00:00:00:01:11 REACHABLE \n10.10.1.10 dev router-eth0 lladdr 02:00:00:00:01:10 REACHABLE \n",
+      "route_get": "10.10.2.10 dev router-eth1 src 10.10.2.1 uid 0 \n    cache \n"
+    }
+  },
+  "capture_counts": {
+    "vorher-client1.pcap": 10,
+    "vorher-client2.pcap": 10,
+    "vorher-router0.pcap": 20,
+    "vorher-router1.pcap": 30,
+    "vorher-server.pcap": 30,
+    "nachher-client1.pcap": 15,
+    "nachher-client2.pcap": 15,
+    "nachher-router0.pcap": 30,
+    "nachher-router1.pcap": 30,
+    "nachher-server.pcap": 30
+  }
+}

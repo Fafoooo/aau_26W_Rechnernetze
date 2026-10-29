@@ -1,0 +1,47 @@
+reading from file nachweise/run01/vorher-server.pcap, link-type EN10MB (Ethernet), snapshot length 65535
+13:23:49.087277 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 63, id 5030, offset 0, flags [DF], proto ICMP (1), length 84)
+    10.10.1.10 > 10.10.2.10: ICMP echo request, id 38273, seq 1, length 64
+13:23:49.087285 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:49.293725 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 63, id 5129, offset 0, flags [DF], proto ICMP (1), length 84)
+    10.10.1.10 > 10.10.2.10: ICMP echo request, id 38273, seq 2, length 64
+13:23:49.501773 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 63, id 5224, offset 0, flags [DF], proto ICMP (1), length 84)
+    10.10.1.10 > 10.10.2.10: ICMP echo request, id 38273, seq 3, length 64
+13:23:50.149564 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:50.521128 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 33898, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.10.56518 > 10.10.2.10.5000: Flags [S], cksum 0x25fe (correct), seq 790287194, win 64240, options [mss 1460,sackOK,TS val 1331350987 ecr 0,nop,wscale 7], length 0
+13:23:51.173677 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:51.558512 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 33899, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.10.56518 > 10.10.2.10.5000: Flags [S], cksum 0x21f0 (correct), seq 790287194, win 64240, options [mss 1460,sackOK,TS val 1331352025 ecr 0,nop,wscale 7], length 0
+13:23:52.582620 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 33900, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.10.56518 > 10.10.2.10.5000: Flags [S], cksum 0x1df0 (correct), seq 790287194, win 64240, options [mss 1460,sackOK,TS val 1331353049 ecr 0,nop,wscale 7], length 0
+13:23:52.582629 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:53.221578 02:00:00:00:02:10 > 02:00:00:00:02:01, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.1 tell 10.10.2.10, length 28
+13:23:53.221608 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Reply 10.10.2.1 is-at 02:00:00:00:02:01, length 28
+13:23:53.605706 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:53.605742 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 33901, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.10.56518 > 10.10.2.10.5000: Flags [S], cksum 0x19f1 (correct), seq 790287194, win 64240, options [mss 1460,sackOK,TS val 1331354072 ecr 0,nop,wscale 7], length 0
+13:23:54.629494 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:54.629523 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 33902, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.10.56518 > 10.10.2.10.5000: Flags [S], cksum 0x15f1 (correct), seq 790287194, win 64240, options [mss 1460,sackOK,TS val 1331355096 ecr 0,nop,wscale 7], length 0
+13:23:55.537384 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 63, id 32004, offset 0, flags [DF], proto ICMP (1), length 84)
+    10.10.1.11 > 10.10.2.10: ICMP echo request, id 38283, seq 1, length 64
+13:23:55.741681 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 63, id 32156, offset 0, flags [DF], proto ICMP (1), length 84)
+    10.10.1.11 > 10.10.2.10: ICMP echo request, id 38283, seq 2, length 64
+13:23:55.741692 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:55.949598 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 63, id 32163, offset 0, flags [DF], proto ICMP (1), length 84)
+    10.10.1.11 > 10.10.2.10: ICMP echo request, id 38283, seq 3, length 64
+13:23:56.805541 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:56.967883 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 24806, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.11.42636 > 10.10.2.10.5000: Flags [S], cksum 0x4738 (correct), seq 3233554807, win 64240, options [mss 1460,sackOK,TS val 3413149429 ecr 0,nop,wscale 7], length 0
+13:23:57.829480 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:23:58.021680 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 24807, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.11.42636 > 10.10.2.10.5000: Flags [S], cksum 0x431a (correct), seq 3233554807, win 64240, options [mss 1460,sackOK,TS val 3413150483 ecr 0,nop,wscale 7], length 0
+13:23:59.045699 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 24808, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.11.42636 > 10.10.2.10.5000: Flags [S], cksum 0x3f1a (correct), seq 3233554807, win 64240, options [mss 1460,sackOK,TS val 3413151507 ecr 0,nop,wscale 7], length 0
+13:23:59.045711 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:24:00.069714 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:24:00.069731 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 24809, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.11.42636 > 10.10.2.10.5000: Flags [S], cksum 0x3b1a (correct), seq 3233554807, win 64240, options [mss 1460,sackOK,TS val 3413152531 ecr 0,nop,wscale 7], length 0
+13:24:01.093502 02:00:00:00:02:10 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Ethernet (len 6), IPv4 (len 4), Request who-has 10.10.2.254 tell 10.10.2.10, length 28
+13:24:01.093511 02:00:00:00:02:01 > 02:00:00:00:02:10, ethertype IPv4 (0x0800), length 74: (tos 0x0, ttl 63, id 24810, offset 0, flags [DF], proto TCP (6), length 60)
+    10.10.1.11.42636 > 10.10.2.10.5000: Flags [S], cksum 0x371a (correct), seq 3233554807, win 64240, options [mss 1460,sackOK,TS val 3413153555 ecr 0,nop,wscale 7], length 0

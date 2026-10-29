@@ -1,0 +1,5 @@
+dumpcap: '-P' is deprecated; use '-F pcap' to set the output format to pcap.
+Capturing on 'server-eth0'
+File: -
+Packets: 1 Packets: 4 Packets: 17 Packets: 19 Packets: 30 Packets captured: 30
+Packets received/dropped on interface 'server-eth0': 30/0 (pcap:0/dumpcap:0/flushed:0/ps_ifdrop:0) (100.0%)

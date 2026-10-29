@@ -1,0 +1,7 @@
+Diagnose VOR Änderung: Serverroute über 10.10.2.254 statt vorhandenem Router 10.10.2.1; eingehende SYNs und erfolglose ARP-Auflösung im Server-PCAP; Rückweg blockiert.
+{
+  "addr": "lo               UNKNOWN        127.0.0.1/8 \nserver-eth0@if6  UP             10.10.2.10/24 \n",
+  "route": "default via 10.10.2.254 dev server-eth0 \n10.10.2.0/24 dev server-eth0 proto kernel scope link src 10.10.2.10 \n",
+  "neigh": "10.10.2.1 dev server-eth0 lladdr 02:00:00:00:02:01 REACHABLE \n10.10.2.254 dev server-eth0 FAILED \n",
+  "route_get": "10.10.1.10 via 10.10.2.254 dev server-eth0 src 10.10.2.10 uid 0 \n    cache \n"
+}

@@ -1,0 +1,545 @@
+# Blatt 09 – jede nichtleere Zeile der eigenen Python-Dateien
+
+KI-Kennzeichnung: Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription. Datum: 2026-10-29.
+
+Die Dateinamen sind relativ zu `ueb09/`. `L<N>` bezeichnet die tatsächliche physische Quelltextzeile einschließlich der mitgezählten Leerzeilen. Für Leerzeilen selbst gibt es keinen Eintrag. Hier sind `pcap.py`, `messen.py`, `auswertung.py`, fünf `pruefen.py` und `test_nachweise.py` erklärt; unveränderte Originale unter `Angabe/` sind bewusst ausgenommen. Zusammenhänge und Live-Änderungsstellen erklärt [erklaerung_blatt09.md](erklaerung_blatt09.md). Wörtliche HTML-maskierte Quelltextspannen werden mit dem aktuellen Code maschinell verglichen.
+
+## `pcap.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Kennzeichnet die KI-Herkunft dieses eigenen Paketparsers mit Agent, Modell und verwendeter Zugangsart, damit er nicht als fremdes Original erscheint.
+- L2: <code># Datum: 2026-10-29</code> — Hält das angegebene Erstellungsdatum des Parsers fest, damit die Kennzeichnung vollständig ist.
+- L3: <code># Anfrage: Eigene Ethernet-PCAPs für Blatt09 streng mit Python-Standardbibliothek prüfen.</code> — Nennt den konkreten Auftrag: eigene Ethernet-Mitschnitte streng und ohne zusätzliche Python-Pakete prüfen.
+- L4: <code>&quot;&quot;&quot;Klassisches Ethernet-PCAP; bewusst kein PCAPNG, VLAN oder fragmentiertes IPv4.&quot;&quot;&quot;</code> — Grenzt den Parser gleich zu Beginn auf klassisches Ethernet-PCAP ein; andere Formate und IPv4-Fragmente soll man nicht versehentlich als unterstützt ansehen.
+- L5: <code>import ipaddress</code> — Lädt die Standardbibliothek zur korrekten Darstellung der vier IPv4-Adressbytes.
+- L6: <code>import struct</code> — Lädt `struct`, weil Felder im Paket binär und nicht als fertiger Text gespeichert sind.
+- L7: <code>from pathlib import Path</code> — Lädt `Path`, um die PCAP-Datei unmittelbar als Bytes einzulesen.
+- L8: <code>from typing import Any</code> — Lädt `Any` für den Typ-Hinweis, weil das Paketwörterbuch Zahlen und Zeichenketten mischt.
+- L11: <code>def require(condition, message):</code> — Definiert eine gemeinsame Prüffunktion, damit jede verletzte Paketbedingung eine verständliche Meldung bekommt.
+- L12: <code>    if not condition:</code> — Reagiert nur dann, wenn die übergebene Bedingung nicht erfüllt ist; korrekte Daten dürfen weiterverarbeitet werden.
+- L13: <code>        raise ValueError(message)</code> — Bricht bei einem Prüfproblem mit `ValueError` und der jeweiligen konkreten Meldung ab, statt falsche Messwerte weiterzugeben.
+- L16: <code>def checksum(data):</code> — Beginnt die Berechnung der Internet-Prüfsumme für IPv4, ICMP und TCP.
+- L17: <code>    data += b&quot;\0&quot; * (len(data) % 2)</code> — Ergänzt bei ungerader Bytelänge genau ein Nullbyte, weil die Rechnung immer Zweiergruppen von Bytes braucht.
+- L18: <code>    total = sum(struct.unpack(f&quot;!{len(data) // 2}H&quot;, data))</code> — Liest alle Zweiergruppen als vorzeichenlose 16-Bit-Wörter in Netzwerk-Bytefolge und addiert sie.
+- L19: <code>    while total &gt;&gt; 16:</code> — Wiederholt die Übertragsbehandlung, solange die Summe noch mehr als 16 Bit benötigt.
+- L20: <code>        total = (total &amp; 65535) + (total &gt;&gt; 16)</code> — Addiert die oberen Übertragsbits zu den unteren 16 Bit; das entspricht dem Einerkomplement-Verfahren.
+- L21: <code>    return (~total) &amp; 65535</code> — Invertiert das gefaltete Ergebnis und begrenzt es auf 16 Bit; bei einem korrekt gespeicherten Paket ergibt die Gesamtprüfung null.
+- L24: <code>def mac(raw):</code> — Definiert eine Darstellungshilfe für rohe Ethernet-MAC-Adressen.
+- L25: <code>    return &quot;:&quot;.join(f&quot;{byte:02x}&quot; for byte in raw)</code> — Formatiert jedes MAC-Byte mit zwei Hexadezimalstellen und verbindet die Teile durch Doppelpunkte, damit sie mit tcpdump vergleichbar sind.
+- L28: <code>def ip(raw):</code> — Definiert die entsprechende Darstellungshilfe für eine rohe IPv4-Adresse.
+- L29: <code>    return str(ipaddress.IPv4Address(raw))</code> — Wandelt die vier Bytes über `IPv4Address` in die übliche Schreibweise mit Punkten um und lässt ungültige Längen nicht still durchgehen.
+- L32: <code>def frame(raw, number):</code> — Beginnt das Zerlegen eines einzelnen Ethernet-Frames; die übergebene Nummer bleibt als Belegverweis erhalten.
+- L33: <code>    require(len(raw) &gt;= 14, &quot;Ethernet abgeschnitten&quot;)</code> — Verlangt mindestens den vollständigen 14-Byte-Ethernet-Kopf, bevor darin gelesen wird.
+- L34: <code>    p: dict[str, Any] = dict(frame=number, dst_mac=mac(raw[:6]), src_mac=mac(raw[6:12]))</code> — Speichert Framenummer sowie Ziel- und Quell-MAC aus ihren jeweiligen Positionen im Ethernet-Kopf.
+- L35: <code>    kind = struct.unpack(&quot;!H&quot;, raw[12:14])[0]</code> — Liest den EtherType als 16-Bit-Wert, damit ARP und IPv4 unterschieden werden können.
+- L36: <code>    body = raw[14:]</code> — Trennt den Ethernet-Kopf ab; die restlichen Bytes beginnen mit dem darüberliegenden Protokoll.
+- L37: <code>    if kind == 0x0806:</code> — Aktiviert die ARP-Auswertung nur beim passenden EtherType `0x0806`.
+- L38: <code>        require(len(body) &gt;= 28 and body[:6] == b&quot;\x00\x01\x08\x00\x06\x04&quot;, &quot;Ungültiges Ethernet/IPv4-ARP&quot;)</code> — Verlangt genügend ARP-Bytes und genau den erwarteten Ethernet-/IPv4-Adressaufbau, damit die folgenden festen Positionen stimmen.
+- L39: <code>        p.update(arp_op=struct.unpack(&quot;!H&quot;, body[6:8])[0], arp_sha=mac(body[8:14]), arp_spa=ip(body[14:18]), arp_tpa=ip(body[24:28]))</code> — Speichert ARP-Operation, Sender-MAC, Sender-IP und gesuchte Ziel-IP; diese Felder belegen später die Suche nach dem falschen Gateway.
+- L40: <code>    if kind == 0x0800:</code> — Aktiviert die IPv4-Auswertung nur beim passenden EtherType `0x0800`.
+- L41: <code>        require(len(body) &gt;= 20 and body[0] &gt;&gt; 4 == 4, &quot;IPv4 abgeschnitten&quot;)</code> — Prüft Mindestlänge und IP-Version, bevor ein möglicherweise abgeschnittener oder fremder Header gelesen wird.
+- L42: <code>        ihl, length = (body[0] &amp; 15) * 4, struct.unpack(&quot;!H&quot;, body[2:4])[0]</code> — Berechnet die wirkliche IPv4-Headerlänge aus dem IHL-Feld und liest die gesamte IPv4-Paketlänge aus dem Header.
+- L43: <code>        require(20 &lt;= ihl &lt;= length &lt;= len(body), &quot;IPv4-Längen falsch&quot;)</code> — Verlangt sinnvolle Grenzen zwischen Mindestheader, Headerlänge, Paketlänge und tatsächlich verfügbaren Bytes.
+- L44: <code>        require(struct.unpack(&quot;!H&quot;, body[6:8])[0] &amp; 0x3fff == 0, &quot;IPv4-Fragmente nicht unterstützt&quot;)</code> — Verwirft Pakete mit Fragmentoffset oder More-Fragments-Bit, weil der Parser keine Fragmente zusammensetzt; Don't Fragment ist weiterhin erlaubt.
+- L45: <code>        segment = body[ihl:length]</code> — Begrenzt das Transportsegment auf die IPv4-Gesamtlänge, damit eventuelles Ethernet-Padding nicht als TCP- oder ICMP-Inhalt gilt.
+- L46: <code>        p.update(src_ip=ip(body[12:16]), dst_ip=ip(body[16:20]), ttl=body[8], proto=body[9], ip_id=struct.unpack(&quot;!H&quot;, body[4:6])[0], transport=segment.hex())</code> — Speichert IP-Quelladresse, IP-Zieladresse, TTL, Protokollnummer, IP-ID und Transportbytes; diese Werte ermöglichen den Vergleich beider Routerseiten.
+- L47: <code>        require(checksum(body[:ihl]) == 0, &quot;IPv4-Prüfsumme falsch&quot;)</code> — Prüft den vollständigen IPv4-Header einschließlich seiner gespeicherten Prüfsumme auf ein gültiges Nullergebnis.
+- L48: <code>        if p[&quot;proto&quot;] == 1:</code> — Wählt die ICMP-Auswertung, wenn im IPv4-Protokollfeld die Nummer 1 steht.
+- L49: <code>            require(len(segment) &gt;= 8 and checksum(segment) == 0, &quot;ICMP falsch&quot;)</code> — Verlangt mindestens acht ICMP-Bytes und eine korrekte ICMP-Prüfsumme, bevor die Felder verwendet werden.
+- L50: <code>            p.update(icmp_type=segment[0], icmp_code=segment[1], icmp_id=struct.unpack(&quot;!H&quot;, segment[4:6])[0], icmp_seq=struct.unpack(&quot;!H&quot;, segment[6:8])[0])</code> — Speichert ICMP-Typ, Code sowie die beiden 16-Bit-Felder für Echo-ID und Sequenz; bei anderen ICMP-Typen haben diese letzten Felder nicht dieselbe Bedeutung.
+- L51: <code>        if p[&quot;proto&quot;] == 6:</code> — Wählt die TCP-Auswertung bei IPv4-Protokollnummer 6.
+- L52: <code>            require(len(segment) &gt;= 20, &quot;TCP abgeschnitten&quot;)</code> — Verlangt den minimal vollständigen TCP-Kopf, bevor dessen Felder gelesen werden.
+- L53: <code>            offset = (segment[12] &gt;&gt; 4) * 4</code> — Berechnet die TCP-Headerlänge aus dem Data-Offset-Feld, weil TCP-Optionen den Kopf verlängern können.
+- L54: <code>            require(20 &lt;= offset &lt;= len(segment), &quot;TCP-Offset falsch&quot;)</code> — Prüft, dass der TCP-Kopf mindestens 20 Bytes hat und innerhalb des aufgezeichneten Segments endet.
+- L55: <code>            pseudo = body[12:20] + struct.pack(&quot;!BBH&quot;, 0, 6, len(segment))</code> — Baut den für die TCP-Prüfsumme nötigen Pseudoheader aus IP-Adressen, Protokollnummer und TCP-Segmentlänge.
+- L56: <code>            require(checksum(pseudo + segment) == 0, &quot;TCP-Prüfsumme falsch; Offloading prüfen&quot;)</code> — Prüft Pseudoheader und TCP-Segment gemeinsam; die Fehlermeldung erinnert daran, dass Offloading scheinbar falsche Mitschnitt-Prüfsummen verursachen kann.
+- L57: <code>            sport, dport, seq, ack = struct.unpack(&quot;!HHII&quot;, segment[:12])</code> — Liest Quellport, Zielport, Sequenznummer und Bestätigungsnummer aus den ersten zwölf TCP-Bytes.
+- L58: <code>            p.update(sport=sport, dport=dport, seq=seq, ack=ack, flags=segment[13], payload=segment[offset:].hex())</code> — Speichert diese TCP-Felder, die Flag-Bits und die reinen Nutzdaten als Hextext, damit die Auswertung Handshake und Datenstrom prüfen kann.
+- L59: <code>    return p</code> — Gibt das Paketwörterbuch zurück; bei nicht ausgewerteten EtherTypes bleiben darin nur die Ethernet-Grunddaten.
+- L62: <code>def read_pcap(path):</code> — Beginnt die Funktion, die eine ganze klassische PCAP-Datei in Paketwörterbücher umwandelt.
+- L63: <code>    raw = Path(path).read_bytes()</code> — Liest die Datei unverändert als Binärbytes; Textdekodierung würde Paketdaten beschädigen.
+- L64: <code>    require(len(raw) &gt;= 24, &quot;PCAP-Kopf fehlt&quot;)</code> — Verlangt zuerst den vollständigen globalen PCAP-Kopf mit 24 Bytes.
+- L65: <code>    magics = {b&quot;\xd4\xc3\xb2\xa1&quot;: &quot;&lt;&quot;, b&quot;\xa1\xb2\xc3\xd4&quot;: &quot;&gt;&quot;, b&quot;\x4d\x3c\xb2\xa1&quot;: &quot;&lt;&quot;, b&quot;\xa1\xb2\x3c\x4d&quot;: &quot;&gt;&quot;}</code> — Ordnet den vier unterstützten PCAP-Magic-Bytefolgen die passende Byteordnung zu; Mikro- und Nanosekundenvarianten werden erkannt.
+- L66: <code>    require(raw[:4] in magics, &quot;Kein klassisches PCAP&quot;)</code> — Verwirft unbekannte Magic-Bytes, insbesondere PCAPNG, statt einen falschen Headeraufbau anzunehmen.
+- L67: <code>    endian = magics[raw[:4]]</code> — Merkt sich die durch die Magic-Bytes festgelegte Byteordnung für alle PCAP-Dateifelder.
+- L68: <code>    major, minor, _, _, snaplen, linktype = struct.unpack(endian + &quot;HHIIII&quot;, raw[4:24])</code> — Liest Version, Snaplen und Linktyp; die beiden mit Unterstrich belegten Felder werden für diese Auswertung nicht gebraucht.
+- L69: <code>    require((major, minor, linktype) == (2, 4, 1) and snaplen &gt; 0, &quot;Kein Ethernet-PCAP 2.4&quot;)</code> — Verlangt PCAP-Version 2.4, Ethernet-Linktyp 1 und eine positive Snaplen, weil genau dafür `frame()` geschrieben ist.
+- L70: <code>    packets, position = [], 24</code> — Beginnt mit leerer Paketliste und setzt die Leseposition hinter den globalen Kopf.
+- L71: <code>    while position &lt; len(raw):</code> — Bearbeitet nacheinander alle Records, bis das Dateiende erreicht ist.
+- L72: <code>        require(position + 16 &lt;= len(raw), &quot;Recordkopf fehlt&quot;)</code> — Prüft vor jedem Record, ob dessen vollständiger 16-Byte-Kopf noch vorhanden ist.
+- L73: <code>        _, _, captured, original = struct.unpack(endian + &quot;IIII&quot;, raw[position:position + 16])</code> — Liest gespeicherte und ursprüngliche Paketlänge; die beiden Zeitstempelfelder werden bewusst nicht weiter ausgewertet.
+- L74: <code>        position += 16</code> — Verschiebt die Leseposition hinter den Recordkopf an den Beginn der Framebytes.
+- L75: <code>        require(captured == original and captured &lt;= snaplen and position + captured &lt;= len(raw), &quot;Record verkürzt&quot;)</code> — Verlangt ungekürzte Frames innerhalb von Snaplen und Dateiende, damit spätere Prüfungen nicht auf fehlenden Daten beruhen.
+- L76: <code>        packets.append(frame(raw[position:position + captured], len(packets) + 1))</code> — Zerlegt die Framebytes und vergibt eine bei eins beginnende Framenummer passend zur Reihenfolge im Mitschnitt.
+- L77: <code>        position += captured</code> — Rückt um die gerade gelesene Framelänge zum nächsten Record vor.
+- L78: <code>    return packets</code> — Gibt die vollständig gelesene Paketliste an Messrunner oder Auswertung zurück.
+
+## `messen.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Kennzeichnet die KI-Herkunft des eigenen Messrunners mit Agent, Modell und Zugangsart, statt ihn mit den Originalvorlagen zu vermischen.
+- L2: <code># Datum: 2026-10-29</code> — Dokumentiert das angegebene Erstellungsdatum des Messrunners.
+- L3: <code># Anfrage: Blatt09 unverändert beobachten, Paketfluss sichern, Gateway minimal reparieren und beide Originalclients real testen.</code> — Hält als Auftrag fest, erst Belege zu sichern, dann minimal das Gateway zu reparieren und beide Originalclients real zu testen.
+- L4: <code>&quot;&quot;&quot;Echte Linux-Bridge/veth-Ersatzmessung. KEIN Mininet-/OVS-/xterm-Nachweis. Python &gt;=3.12.&quot;&quot;&quot;</code> — Nennt ausdrücklich den Linux-Bridge-/veth-Ersatz und seine Grenzen; außerdem wird Python ab 3.12 für `os.unshare()` vorausgesetzt.
+- L5: <code>import argparse</code> — Lädt `argparse`, damit Ausgabeordner und der interne Halteprozess-Modus über Argumente gewählt werden können.
+- L6: <code>import json</code> — Lädt JSON-Unterstützung für maschinenlesbare Zustände und Testergebnisse.
+- L7: <code>import os</code> — Lädt Betriebssystemfunktionen für Namespace-Wechsel, Rootprüfung, Pipe-Lesen und Eigentümerkorrektur.
+- L8: <code>import re</code> — Lädt reguläre Ausdrücke, um den echten abschließenden dumpcap-Paketzähler aus seiner Ausgabe zu lesen.
+- L9: <code>import selectors</code> — Lädt `selectors`, damit auf Bereitschaftsausgaben gewartet werden kann, ohne unbegrenzt blockierend zu lesen.
+- L10: <code>import signal</code> — Lädt Signalunterstützung für die wartenden Namespace-Halteprozesse.
+- L11: <code>import subprocess</code> — Lädt die Prozessschnittstelle für echte Netzwerkbefehle, Anwendungen und Mitschnitte.
+- L12: <code>import time</code> — Lädt die monotone Uhr, damit Systemuhränderungen Bereitschaftsfristen nicht verschieben.
+- L13: <code>from pathlib import Path</code> — Lädt portable Pfadoperationen für Originale, Belegordner und Programmdateien.
+- L14: <code>from pcap import read_pcap, require</code> — Verwendet den eigenen PCAP-Parser und dieselbe zentrale Prüffunktion wie die spätere Analyse.
+- L15: <code>from auswertung import check_fault</code> — Importiert die konkrete Fehlerprüfung, damit die Paketdiagnose schon vor der Reparatur wirklich ausgeführt werden kann.
+- L17: <code>BASE = Path(__file__).resolve().parent</code> — Bestimmt `ueb09/` aus dem Standort dieser Datei, damit der Aufruf nicht vom aktuellen Arbeitsverzeichnis abhängt.
+- L18: <code>PYTHON = &quot;/usr/bin/python3&quot;</code> — Legt für die gemessenen Anwendungen und Halteprozesse explizit den System-Python-Pfad fest.
+- L19: <code>HOSTS = {&quot;client1&quot;: (&quot;10.10.1.10&quot;, &quot;02:00:00:00:01:10&quot;), &quot;client2&quot;: (&quot;10.10.1.11&quot;, &quot;02:00:00:00:01:11&quot;), &quot;server&quot;: (&quot;10.10.2.10&quot;, &quot;02:00:00:00:02:10&quot;)}</code> — Sammelt IP- und feste MAC-Adressen beider Clients und des Servers; dieselbe Reihenfolge wird beim Aufbau und Testen verwendet.
+- L22: <code>def wait_token(stream, token, timeout=5):</code> — Definiert das Warten auf ein bestimmtes Byte-Signal mit standardmäßig fünf Sekunden Gesamtfrist.
+- L23: <code>    deadline, seen = time.monotonic() + timeout, b&quot;&quot;</code> — Berechnet einmal die absolute Frist und startet einen leeren Ausgabepuffer, damit auch geteilte Meldungen gefunden werden.
+- L24: <code>    with selectors.DefaultSelector() as selector:</code> — Öffnet einen automatisch wieder geschlossenen Selector für die überwachte Prozessausgabe.
+- L25: <code>        selector.register(stream, selectors.EVENT_READ)</code> — Meldet den Ausgabestream zum Lesen an; erst bei verfügbaren Bytes soll `os.read()` aufgerufen werden.
+- L26: <code>        while token not in seen:</code> — Wiederholt das Warten, bis die vollständig gesuchte Meldung im gesammelten Puffer steht.
+- L27: <code>            remaining = deadline - time.monotonic()</code> — Berechnet die noch verbleibende Zeit gegenüber derselben absoluten Frist neu.
+- L28: <code>            require(remaining &gt; 0, &quot;Bereitschaft: Zeitlimit&quot;)</code> — Bricht ab, wenn diese Gesamtfrist überschritten ist, statt bei jeder Schleife wieder fünf Sekunden zu gewähren.
+- L29: <code>            if not selector.select(min(0.2, remaining)):</code> — Wartet höchstens 0,2 Sekunden oder die kürzere Restzeit auf lesbare Daten.
+- L30: <code>                continue</code> — Geht nach einem bloß ruhigen Warteintervall weiter; fehlende sofortige Ausgabe ist noch kein Startfehler.
+- L31: <code>            chunk = os.read(stream.fileno(), 4096)</code> — Liest bis zu 4096 tatsächlich verfügbare Bytes aus dem Prozessstream.
+- L32: <code>            require(chunk, &quot;Prozess vor Bereitschaft beendet&quot;)</code> — Erkennt einen geschlossenen Stream vor der Bereitschaftsmeldung als vorzeitig beendeten Prozess.
+- L33: <code>            seen += chunk</code> — Hängt die neuen Bytes an, damit ein über mehrere Lesevorgänge verteilter Token trotzdem erkannt wird.
+- L34: <code>    return seen</code> — Liefert die schon gelesene Ausgabe zurück; bei dumpcap gehört sie später zum vollständigen Statusprotokoll.
+- L37: <code>class Lab:</code> — Bündelt den Zustand und die Operationen des Ersatzlabors in einer eigenen Klasse.
+- L38: <code>    def __init__(self, out):</code> — Beginnt die Initialisierung einer Laborinstanz mit ihrem neuen Belegordner.
+- L39: <code>        self.out, self.hosts, self.processes, self.files = out, {}, [], []</code> — Merkt sich Ausgabeordner, Namespace-Halter, gestartete Prozesse und offene Capture-Dateien für Betrieb und Aufräumen.
+- L40: <code>        self.log, self.counts = [], {}</code> — Startet die Listen für Befehlsprotokolle und die Zuordnung von PCAP-Namen zu Paketzahlen.
+- L42: <code>    def prefix(self, host):</code> — Definiert den Kommando-Präfix für einen bestimmten virtuellen Netzwerkknoten.
+- L43: <code>        return [&quot;nsenter&quot;, &quot;-t&quot;, str(self.hosts[host].pid), &quot;-n&quot;, &quot;--&quot;] if host else []</code> — Baut für benannte Knoten einen `nsenter`-Aufruf zum Netzwerk-Namespace ihres Halteprozesses; ohne Host bleibt der Befehl im äußeren Labor-Namespace.
+- L45: <code>    def run(self, host, *args, success=True):</code> — Definiert den protokollierenden Befehlsaufruf; `success=False` erlaubt ausdrücklich erwartete Fehler.
+- L46: <code>        result = subprocess.run(self.prefix(host) + list(args), capture_output=True, text=True, timeout=12)</code> — Führt den echten Befehl mit Argumentliste, gesammelten Textausgaben und zwölf Sekunden Zeitlimit aus; es wird keine Shell zusammengesetzt.
+- L47: <code>        result.stdout = result.stdout.replace(str(BASE), &quot;&lt;ueb09&gt;&quot;)</code> — Ersetzt den lokalen Projektpfad in der Standardausgabe durch `<ueb09>`, damit Belege keine unnötigen lokalen Pfadangaben verbreiten.
+- L48: <code>        result.stderr = result.stderr.replace(str(BASE), &quot;&lt;ueb09&gt;&quot;)</code> — Entfernt dieselbe lokale Pfadangabe auch aus Fehlermeldungen wie einem Client-Traceback.
+- L49: <code>        command = &#x27; &#x27;.join(args).replace(str(BASE), &quot;&lt;ueb09&gt;&quot;)</code> — Erstellt eine lesbare Befehlsdarstellung fürs Protokoll und anonymisiert auch darin den Projektpfad; ausgeführt wurde weiterhin die Argumentliste.
+- L50: <code>        self.log.append(f&quot;[{host or &#x27;switch&#x27;}] {command}\n{result.stdout}{result.stderr}RC={result.returncode}\n&quot;)</code> — Protokolliert Knoten, Befehl, beide Ausgabekanäle und echten Rückgabecode zusammen, damit das Ergebnis nachvollziehbar bleibt.
+- L51: <code>        if success:</code> — Schaltet die strenge Erfolgskontrolle nur für Aufrufe ein, die nicht als erwarteter Fehler markiert wurden.
+- L52: <code>            require(result.returncode == 0, f&quot;Befehl fehlgeschlagen: {args[0]}&quot;)</code> — Verlangt in diesem Fall Rückgabecode null; ein fehlerhafter Infrastrukturaufbau darf nicht unbemerkt weiterlaufen.
+- L53: <code>        return dict(rc=result.returncode, stdout=result.stdout, stderr=result.stderr)</code> — Gibt Rückgabecode und Ausgaben als Wörterbuch zurück, damit sie in `results.json` abgelegt werden können.
+- L55: <code>    def spawn(self, host, args):</code> — Definiert den Start eines länger laufenden Prozesses, der nicht sofort vollständig abgewartet wird.
+- L56: <code>        process = subprocess.Popen(self.prefix(host) + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)</code> — Startet ihn im ausgewählten Netzwerk-Namespace und öffnet Pipes für echte Bereitschafts- oder Fehlerausgaben.
+- L57: <code>        self.processes.append(process)</code> — Registriert den Prozess für das spätere sichere Beenden und Abwarten.
+- L58: <code>        return process</code> — Gibt das Prozessobjekt zurück, damit PID oder Ausgabe unmittelbar verwendet werden können.
+- L60: <code>    def holder(self, name):</code> — Beginnt den Aufbau eines benannten Namespace-Halteprozesses für einen Netzwerkknoten.
+- L61: <code>        process = self.spawn(None, [PYTHON, &quot;-B&quot;, str(BASE / &quot;messen.py&quot;), &quot;--holder&quot;])</code> — Startet denselben Runner im versteckten `--holder`-Modus ohne Bytecode-Dateien; der Kindprozess erzeugt seinen eigenen Netzwerk-Namespace.
+- L62: <code>        self.hosts[name] = process</code> — Ordnet den gestarteten Prozess dem Knotennamen zu, damit spätere `nsenter`-Aufrufe seine PID finden.
+- L63: <code>        wait_token(process.stdout, b&quot;READY\n&quot;)</code> — Wartet auf dessen echtes `READY`, damit kein Netzbefehl vor der Namespace-Erzeugung startet.
+- L64: <code>        self.run(name, &quot;sysctl&quot;, &quot;-qw&quot;, &quot;net.ipv6.conf.all.disable_ipv6=1&quot;, &quot;net.ipv6.conf.default.disable_ipv6=1&quot;)</code> — Deaktiviert IPv6 im eigenen Knoten-Namespace für vorhandene und später angelegte Interfaces, um den IPv4-Versuch abzugrenzen.
+- L65: <code>        self.run(name, &quot;ip&quot;, &quot;link&quot;, &quot;set&quot;, &quot;lo&quot;, &quot;up&quot;)</code> — Aktiviert dort das Loopback-Interface, das ein neuer Netzwerk-Namespace zunächst nicht betriebsbereit vorfindet.
+- L67: <code>    def bridge(self, name):</code> — Definiert das Anlegen eines virtuellen Ethernet-Switches als Linux-Bridge.
+- L68: <code>        self.run(None, &quot;ip&quot;, &quot;link&quot;, &quot;add&quot;, name, &quot;type&quot;, &quot;bridge&quot;, &quot;stp_state&quot;, &quot;0&quot;, &quot;forward_delay&quot;, &quot;0&quot;)</code> — Erzeugt die Bridge mit ausgeschaltetem Spanning Tree und ohne Forward-Delay für das kleine schleifenfreie Labornetz.
+- L69: <code>        self.run(None, &quot;ip&quot;, &quot;link&quot;, &quot;set&quot;, name, &quot;up&quot;)</code> — Schaltet die neue Bridge aktiv, damit sie Frames zwischen ihren Ports weiterleiten kann.
+- L71: <code>    def attach(self, host, interface, port, bridge, address, mac):</code> — Definiert den vollständigen Anschluss eines Knoteninterfaces an eine der Bridges.
+- L72: <code>        self.run(None, &quot;ip&quot;, &quot;link&quot;, &quot;add&quot;, port, &quot;type&quot;, &quot;veth&quot;, &quot;peer&quot;, &quot;name&quot;, interface, &quot;netns&quot;, str(self.hosts[host].pid))</code> — Erzeugt ein veth-Paar; das Endgerät-Interface liegt direkt im gewünschten Knoten-Namespace, der andere Port bleibt außen.
+- L73: <code>        self.run(None, &quot;ip&quot;, &quot;link&quot;, &quot;set&quot;, port, &quot;master&quot;, bridge)</code> — Hängt den äußeren veth-Port als Mitglied an die ausgewählte Bridge.
+- L74: <code>        self.run(None, &quot;ip&quot;, &quot;link&quot;, &quot;set&quot;, port, &quot;up&quot;)</code> — Aktiviert diesen äußeren Port, damit das veth-Paar nicht an einer deaktivierten Seite hängen bleibt.
+- L75: <code>        self.run(host, &quot;ip&quot;, &quot;link&quot;, &quot;set&quot;, interface, &quot;address&quot;, mac)</code> — Vergibt am Knoteninterface die feste Labor-MAC für reproduzierbare Paketvergleiche.
+- L76: <code>        self.run(host, &quot;ip&quot;, &quot;addr&quot;, &quot;add&quot;, address + &quot;/24&quot;, &quot;dev&quot;, interface)</code> — Vergibt die übergebene IPv4-Adresse ausdrücklich mit `/24`, passend zu den beiden getrennten LANs.
+- L77: <code>        self.run(host, &quot;ip&quot;, &quot;link&quot;, &quot;set&quot;, interface, &quot;up&quot;)</code> — Aktiviert auch das Knoteninterface; erst dann ist der Anschluss auf beiden Seiten nutzbar.
+- L78: <code>        for node, device in ((None, port), (host, interface)):</code> — Durchläuft beide Enden des veth-Paars, weil Offloading auf beiden Seiten die Mitschnittdarstellung beeinflussen kann.
+- L79: <code>            self.run(node, &quot;ethtool&quot;, &quot;-K&quot;, device, &quot;tx&quot;, &quot;off&quot;, &quot;rx&quot;, &quot;off&quot;, &quot;tso&quot;, &quot;off&quot;, &quot;gso&quot;, &quot;off&quot;, &quot;gro&quot;, &quot;off&quot;)</code> — Schaltet Prüfsummen- und Segmentierungs-/Zusammenfassungs-Offloading ab, damit vollständige überprüfbare Pakete aufgezeichnet werden.
+- L81: <code>    def setup(self):</code> — Beginnt den Aufbau der absichtlich fehlerhaften Ausgangstopologie.
+- L82: <code>        self.run(None, &quot;sysctl&quot;, &quot;-qw&quot;, &quot;net.ipv6.conf.all.disable_ipv6=1&quot;, &quot;net.ipv6.conf.default.disable_ipv6=1&quot;)</code> — Deaktiviert IPv6 auch im äußeren, bereits isolierten Labor-Namespace mit den Bridges.
+- L83: <code>        for bridge in (&quot;sw1&quot;, &quot;sw2&quot;):</code> — Durchläuft die zwei benötigten Ethernet-Switch-Namen.
+- L84: <code>            self.bridge(bridge)</code> — Erzeugt und aktiviert die jeweils gewählte Linux-Bridge über die zuvor definierte Hilfsfunktion.
+- L85: <code>        for host in (*HOSTS, &quot;router&quot;):</code> — Durchläuft die drei Endgeräte aus `HOSTS` und zusätzlich den Router.
+- L86: <code>            self.holder(host)</code> — Erzeugt für jeden dieser vier Knoten einen eigenen Netzwerk-Namespace mit aktivem Halteprozess.
+- L87: <code>        for number, (host, (address, mac)) in enumerate(HOSTS.items(), 1):</code> — Durchläuft Hostnamen, IPs und MACs mit einer bei eins beginnenden Nummer für eindeutige äußere Portnamen.
+- L88: <code>            self.attach(host, host + &quot;-eth0&quot;, &quot;p&quot; + str(number), &quot;sw2&quot; if host == &quot;server&quot; else &quot;sw1&quot;, address, mac)</code> — Verbindet den Server mit `sw2` und beide Clients mit `sw1`; die Endgeräte behalten die im Original erwarteten Interfacenamen.
+- L89: <code>        self.attach(&quot;router&quot;, &quot;router-eth0&quot;, &quot;pr0&quot;, &quot;sw1&quot;, &quot;10.10.1.1&quot;, &quot;02:00:00:00:01:01&quot;)</code> — Verbindet die Clientseite des Routers mit `sw1` und vergibt die Gateway-Adresse `10.10.1.1` samt fester MAC.
+- L90: <code>        self.attach(&quot;router&quot;, &quot;router-eth1&quot;, &quot;pr1&quot;, &quot;sw2&quot;, &quot;10.10.2.1&quot;, &quot;02:00:00:00:02:01&quot;)</code> — Verbindet die Serverseite des Routers mit `sw2` und vergibt das tatsächlich vorhandene Server-Gateway `10.10.2.1`.
+- L91: <code>        self.run(&quot;router&quot;, &quot;sysctl&quot;, &quot;-qw&quot;, &quot;net.ipv4.ip_forward=1&quot;)</code> — Aktiviert IPv4-Weiterleitung im Router-Namespace; zwei Interfaces allein machen Linux noch nicht zum weiterleitenden Router.
+- L92: <code>        for host in HOSTS:</code> — Durchläuft nur die Endgeräte, deren entfernte Ziele über eine Default-Route erreichbar sein sollen.
+- L93: <code>            gateway = &quot;10.10.2.254&quot; if host == &quot;server&quot; else &quot;10.10.1.1&quot;</code> — Wählt für Clients das richtige Gateway und für den Server absichtlich `.254`, um den Originalfehler unverändert nachzubilden.
+- L94: <code>            self.run(host, &quot;ip&quot;, &quot;route&quot;, &quot;replace&quot;, &quot;default&quot;, &quot;via&quot;, gateway, &quot;dev&quot;, host + &quot;-eth0&quot;)</code> — Setzt diese Default-Route am jeweiligen Endgerät über dessen einziges Ethernet-Interface.
+- L96: <code>    def state(self):</code> — Beginnt das reine Auslesen des aktuellen Netzwerkzustands aller vier Knoten.
+- L97: <code>        result = {}</code> — Legt ein Ergebniswörterbuch an, in das jeder Knoten seinen eigenen Zustand bekommt.
+- L98: <code>        for host in (*HOSTS, &quot;router&quot;):</code> — Durchläuft Endgeräte und Router, damit kein für die Diagnose wichtiger Knoten fehlt.
+- L99: <code>            result[host] = {name: self.run(host, *args)[&quot;stdout&quot;] for name, args in {</code> — Führt die je Knoten definierten Lesebefehle aus und speichert deren Standardausgabe unter einem festen Feldnamen.
+- L100: <code>                &quot;addr&quot;: (&quot;ip&quot;, &quot;-br&quot;, &quot;addr&quot;), &quot;route&quot;: (&quot;ip&quot;, &quot;route&quot;), &quot;neigh&quot;: (&quot;ip&quot;, &quot;neigh&quot;),</code> — Legt Adress-, Routing- und Neighbor-Abfrage fest; diese drei Ansichten erklären Interfacezustand, Wege und MAC-Auflösung.
+- L101: <code>                &quot;route_get&quot;: (&quot;ip&quot;, &quot;route&quot;, &quot;get&quot;, &quot;10.10.1.10&quot; if host == &quot;server&quot; else &quot;10.10.2.10&quot;)}.items()}</code> — Ergänzt eine konkrete Routenentscheidung: am Server zum ersten Client, sonst zum Server; dabei wird noch kein Testpaket gesendet.
+- L102: <code>        return result</code> — Liefert den vollständig erfassten Zustand für Vorher-/Nachher-Belege zurück.
+- L104: <code>    def ping(self, host, target):</code> — Definiert einen einheitlichen echten Ping-Versuch aus dem angegebenen Knoten.
+- L105: <code>        return self.run(host, &quot;ping&quot;, &quot;-n&quot;, &quot;-c&quot;, &quot;3&quot;, &quot;-i&quot;, &quot;0.2&quot;, &quot;-W&quot;, &quot;1&quot;, target, success=False)</code> — Sendet drei numerisch dargestellte Pings mit kurzen Abständen und begrenzter Wartezeit; ein Fehlschlag wird gespeichert statt sofort abgebrochen.
+- L107: <code>    def capture(self, host, interface, filename):</code> — Beginnt einen Mitschnitt an genau einem benannten Laborinterface.
+- L108: <code>        output = (self.out / filename).open(&quot;xb&quot;)</code> — Öffnet die Ausgabedatei exklusiv binär; eine bereits vorhandene Datei darf nicht überschrieben werden.
+- L109: <code>        self.files.append(output)</code> — Registriert die offene Datei, damit sie auch bei einem Fehler im Ablauf geschlossen werden kann.
+- L110: <code>        command = self.prefix(host) + [&quot;dumpcap&quot;, &quot;-P&quot;, &quot;-i&quot;, interface, &quot;-f&quot;, &quot;arp or icmp or tcp port 5000&quot;, &quot;-s&quot;, &quot;65535&quot;, &quot;-a&quot;, &quot;duration:24&quot;, &quot;-w&quot;, &quot;-&quot;]</code> — Baut den dumpcap-Aufruf für klassisches PCAP, das konkrete Interface, den begrenzten ARP-/ICMP-/TCP-5000-Filter, volle Snaplen und 24 Sekunden reguläre Laufzeit.
+- L111: <code>        process = subprocess.Popen(command, stdout=output, stderr=subprocess.PIPE)</code> — Startet dumpcap, schreibt seine Paketbytes direkt in die Datei und hält Statusmeldungen getrennt in der Fehlerausgabe.
+- L112: <code>        self.processes.append(process)</code> — Registriert auch diesen Capture-Prozess für das zentrale Aufräumen.
+- L113: <code>        startup = wait_token(process.stderr, b&quot;File: -&quot;)</code> — Wartet auf dumpcaps konkrete Ausgabedatei-Bereitschaft `File: -`, bevor der Verkehr erzeugt wird.
+- L114: <code>        return process, output, startup, filename</code> — Gibt Prozess, Datei, bereits gelesenen Status und Dateinamen gemeinsam zurück, damit die Aufnahme später vollständig abgeschlossen wird.
+- L116: <code>    def finish(self, capture):</code> — Beginnt das reguläre Abschließen und Überprüfen einer gestarteten Aufnahme.
+- L117: <code>        process, output, startup, filename = capture</code> — Zerlegt das Capture-Tupel wieder in seine vier Bestandteile.
+- L118: <code>        _, tail = process.communicate(timeout=30)</code> — Wartet auf dumpcaps zeitgesteuertes Ende und sammelt die restlichen Statusbytes mit 30 Sekunden Obergrenze.
+- L119: <code>        output.close()</code> — Schließt die Binärdatei, bevor deren Inhalt vom Parser eingelesen wird.
+- L120: <code>        text = (startup + tail).decode(errors=&quot;replace&quot;)</code> — Setzt frühe und spätere Statusbytes zusammen und macht daraus lesbaren Text, auch bei unerwarteten ungültigen Zeichen.
+- L121: <code>        (self.out / (filename + &quot;.txt&quot;)).write_text(text)</code> — Speichert diesen dumpcap-Status neben dem Mitschnitt unter dem Namen mit zusätzlichem `.txt`.
+- L122: <code>        require(process.returncode == 0, &quot;dumpcap fehlgeschlagen&quot;)</code> — Verlangt einen erfolgreichen dumpcap-Rückgabecode, damit ein kaputter Capture-Prozess nicht als Erfolg gilt.
+- L123: <code>        match = re.search(r&quot;Packets captured: (\d+)&quot;, text)</code> — Sucht den tatsächlichen abschließenden Paketzähler in der vollständigen dumpcap-Ausgabe.
+- L124: <code>        if match is None:</code> — Erkennt ausdrücklich den Fall, dass dieser wichtige Kontrollzähler gar nicht gefunden wurde.
+- L125: <code>            raise ValueError(&quot;dumpcap-Zähler fehlt&quot;)</code> — Bricht dann mit einer konkreten Meldung ab, statt eine fehlende Zahl als null zu behandeln.
+- L126: <code>        packets = read_pcap(self.out / filename)</code> — Liest und prüft die gespeicherte PCAP-Datei unabhängig mit dem eigenen Parser.
+- L127: <code>        require(len(packets) == int(match.group(1)), &quot;PCAP-/dumpcap-Zähler verschieden&quot;)</code> — Vergleicht die Anzahl vollständig gelesener Records mit dumpcaps Zähler; verlorene oder unvollständige Dateiinhalte sollen auffallen.
+- L128: <code>        self.counts[filename] = len(packets)</code> — Merkt sich die bestätigte Paketzahl unter genau diesem Dateinamen für `results.json`.
+- L130: <code>    def client(self, host):</code> — Definiert den echten Anwendungstest aus einem der Client-Namespaces.
+- L131: <code>        return self.run(host, PYTHON, &quot;-B&quot;, str(BASE / &quot;Angabe/tcp_client.py&quot;), success=False)</code> — Führt den unveränderten Originalclient mit System-Python aus und erlaubt den vor der Reparatur erwarteten Fehlerstatus.
+- L133: <code>    def phase(self, name):</code> — Beginnt eine gleich aufgebaute Messphase, deren Name die Vorher-/Nachher-Dateinamen bestimmt.
+- L134: <code>        captures = [self.capture(host, interface, f&quot;{name}-{label}.pcap&quot;) for host, interface, label in (</code> — Startet alle vorgesehenen Aufnahmen vor den Tests und bildet ihren Dateinamen aus Phase und Messpunkt.
+- L135: <code>            (&quot;client1&quot;, &quot;client1-eth0&quot;, &quot;client1&quot;), (&quot;client2&quot;, &quot;client2-eth0&quot;, &quot;client2&quot;),</code> — Nimmt beide Clientinterfaces als getrennte Beobachtungspunkte in die Capture-Liste auf.
+- L136: <code>            (&quot;router&quot;, &quot;router-eth0&quot;, &quot;router0&quot;), (&quot;router&quot;, &quot;router-eth1&quot;, &quot;router1&quot;), (&quot;server&quot;, &quot;server-eth0&quot;, &quot;server&quot;))]</code> — Ergänzt beide Routerseiten und den Server, damit der Weg über das Netz räumlich verfolgt werden kann.
+- L137: <code>        results = {}</code> — Legt den Ergebnisspeicher für die zwei Clienttests dieser Phase an.
+- L138: <code>        for host in (&quot;client1&quot;, &quot;client2&quot;):</code> — Testet zuerst client1 und dann client2, statt nur einen funktionierenden Teilnehmer zu belegen.
+- L139: <code>            results[host] = {&quot;ping&quot;: self.ping(host, &quot;10.10.2.10&quot;), &quot;tcp&quot;: self.client(host)}</code> — Führt pro Client denselben Server-Ping und anschließend den unveränderten TCP-Client aus und speichert beide Resultate.
+- L140: <code>        for capture in captures:</code> — Durchläuft nach den Verkehrstests alle gestarteten Capture-Objekte.
+- L141: <code>            self.finish(capture)</code> — Wartet jede Aufnahme regulär ab und prüft ihre Datei und ihren echten Paketzähler.
+- L142: <code>        return results</code> — Gibt die Ping- und TCP-Ergebnisse beider Clients für diese Phase zurück.
+- L144: <code>    def cleanup(self):</code> — Beginnt das zentrale Aufräumen, das auch bei einer Ausnahme im Messablauf laufen soll.
+- L145: <code>        for process in reversed(self.processes):</code> — Durchläuft eigene Prozesse in umgekehrter Startreihenfolge, damit spätere Anwendungen vor frühen Namespace-Haltern beendet werden.
+- L146: <code>            if process.poll() is None:</code> — Prüft, ob der jeweilige Prozess noch läuft; schon beendete Prozesse brauchen kein Abbruchsignal.
+- L147: <code>                process.terminate()</code> — Sendet einem noch laufenden Prozess zunächst die normale Terminierungsanforderung.
+- L148: <code>            try:</code> — Beginnt das zeitbegrenzte Abwarten dieses Prozesses, auch wenn er schon beendet erscheint.
+- L149: <code>                process.communicate(timeout=3)</code> — Wartet bis zu drei Sekunden und leert dabei seine Pipes, damit keine Zombieprozesse zurückbleiben.
+- L150: <code>            except subprocess.TimeoutExpired:</code> — Fängt ausschließlich den Fall ab, dass der Prozess auf die normale Terminierung nicht rechtzeitig reagiert.
+- L151: <code>                process.kill()</code> — Beendet einen solchen hängenden eigenen Prozess zwangsweise als letzte Aufräummaßnahme.
+- L152: <code>                process.communicate()</code> — Wartet auch das Ende nach dem Kill-Signal ab, statt nur ein Signal zu senden und weiterzugehen.
+- L153: <code>        for output in self.files:</code> — Durchläuft die registrierten Capture-Dateien unabhängig davon, wie weit die Messung gekommen ist.
+- L154: <code>            output.close()</code> — Schließt jede dieser Dateien; ein bereits geschlossenes Dateiobjekt noch einmal zu schließen ist unproblematisch.
+- L155: <code>        (self.out / &quot;befehle.txt&quot;).write_text(&quot;\n&quot;.join(self.log))</code> — Schreibt die während des Laufs gesammelten Befehlsresultate als lesbare Belegdatei.
+- L158: <code>def measure(out):</code> — Beginnt den gesamten privilegierten Messablauf für einen neuen Ausgabeordner.
+- L159: <code>    require(os.geteuid() == 0, &quot;Benötigt sudo und Python &gt;=3.12&quot;)</code> — Prüft effektive Rootrechte; ohne sie kann der isolierte Namespace-/veth-Aufbau nicht wie vorgesehen funktionieren.
+- L160: <code>    os.unshare(os.CLONE_NEWNET)</code> — Erzeugt vor allen Netzwerkänderungen einen frischen äußeren Netzwerk-Namespace und verlässt damit den ursprünglichen Netzkontext.
+- L161: <code>    out.mkdir(parents=True, exist_ok=False)</code> — Legt den Belegordner nur dann an, wenn er noch nicht existiert; bestehende Messungen bleiben geschützt.
+- L162: <code>    lab = Lab(out)</code> — Erzeugt die Laborverwaltung für diesen neuen Belegordner.
+- L163: <code>    try:</code> — Beginnt den durch `finally` abgesicherten Bereich, damit auch ein misslungener Aufbau aufgeräumt wird.
+- L164: <code>        lab.setup()</code> — Baut die Ausgangstopologie einschließlich des absichtlichen Gatewayfehlers auf.
+- L165: <code>        evidence = {&quot;provenance&quot;: &quot;Echte Linux-Netzwerk-Namespaces/veth/Linux Bridges; NICHT Mininet/OVS; keine künstlichen Pakete&quot;, &quot;initial&quot;: lab.state()}</code> — Schreibt die ehrliche Herkunftsbezeichnung und den noch nicht durch Testverkehr veränderten Anfangszustand in den Ergebnisspeicher.
+- L166: <code>        evidence[&quot;baseline&quot;] = {host: lab.ping(host, target) for host, target in ((&quot;client1&quot;, &quot;10.10.1.1&quot;), (&quot;client2&quot;, &quot;10.10.1.1&quot;), (&quot;router&quot;, &quot;10.10.2.10&quot;), (&quot;server&quot;, &quot;10.10.2.1&quot;))}</code> — Prüft die vier lokalen funktionierenden Wege, um eine kaputte Grundinfrastruktur von der beabsichtigten Ende-zu-Ende-Störung zu unterscheiden.
+- L167: <code>        require(all(r[&quot;rc&quot;] == 0 for r in evidence[&quot;baseline&quot;].values()), &quot;Lokale Infrastruktur fehlerhaft&quot;)</code> — Verlangt, dass alle lokalen Basistests wirklich mit Rückgabecode null enden, bevor die Fehleranalyse weitergeht.
+- L168: <code>        server = lab.spawn(&quot;server&quot;, [PYTHON, &quot;-u&quot;, &quot;-B&quot;, str(BASE / &quot;Angabe/tcp_server.py&quot;)])</code> — Startet den unveränderten Originalserver im Server-Namespace; `-u` macht seine Bereitschaftsmeldung sofort lesbar und `-B` vermeidet Bytecode.
+- L169: <code>        wait_token(server.stdout, b&quot;Listening on 0.0.0.0:5000\n&quot;)</code> — Wartet auf genau die Listener-Meldung des Originals, damit die TCP-Tests nicht vor dem Serverstart laufen.
+- L170: <code>        evidence[&quot;before&quot;] = lab.phase(&quot;vorher&quot;)</code> — Führt die vollständige Vorher-Phase mit beiden Clients und fünf echten Mitschnitten aus.
+- L171: <code>        require(all(r[&quot;ping&quot;][&quot;rc&quot;] != 0 and r[&quot;tcp&quot;][&quot;rc&quot;] != 0 for r in evidence[&quot;before&quot;].values()), &quot;Fehler nicht reproduziert&quot;)</code> — Verlangt für beide Clients fehlgeschlagenen Ping und TCP-Aufbau, weil sonst der beabsichtigte Fehler gar nicht reproduziert wäre.
+- L172: <code>        evidence[&quot;fault_state&quot;] = lab.state()</code> — Liest nach den fehlgeschlagenen Versuchen erneut die Zustände; jetzt kann die erfolglose Neighbor-Auflösung sichtbar sein.
+- L173: <code>        evidence[&quot;fault_packet_check_before_repair&quot;] = check_fault(out)</code> — Prüft den fertigen Vorher-Servermitschnitt sofort und noch vor jeder Reparatur auf die konkrete Fehlerhypothese.
+- L174: <code>        diagnosis = &quot;Diagnose VOR Änderung: Serverroute über 10.10.2.254 statt vorhandenem Router 10.10.2.1; eingehende SYNs und erfolglose ARP-Auflösung im Server-PCAP; Rückweg blockiert.&quot;</code> — Formuliert die Diagnose aus falscher Serverroute, ankommenden SYNs und erfolgloser ARP-Suche ausdrücklich als Diagnose vor der Änderung.
+- L175: <code>        (out / &quot;diagnose-vor-reparatur.txt&quot;).write_text(diagnosis + &quot;\n&quot; + json.dumps(evidence[&quot;fault_state&quot;][&quot;server&quot;], indent=2))</code> — Schreibt diese Diagnose zusammen mit dem damaligen Serverzustand dauerhaft weg, bevor der nächste Befehl die Route ändert.
+- L176: <code>        lab.run(&quot;server&quot;, &quot;ip&quot;, &quot;route&quot;, &quot;replace&quot;, &quot;default&quot;, &quot;via&quot;, &quot;10.10.2.1&quot;, &quot;dev&quot;, &quot;server-eth0&quot;)</code> — Führt die einzige Reparatur aus: ersetzt im Server-Namespace die Default-Route durch das vorhandene Gateway `10.10.2.1`.
+- L177: <code>        evidence[&quot;after&quot;] = lab.phase(&quot;nachher&quot;)</code> — Wiederholt anschließend dieselbe Messphase mit Nachher-Dateinamen, statt nur einen anderen, leichteren Test zu wählen.
+- L178: <code>        evidence[&quot;repaired_state&quot;] = lab.state()</code> — Liest den reparierten Zustand aus, damit die neue Routenentscheidung zusätzlich zu erfolgreichen Paketen dokumentiert wird.
+- L179: <code>        require(all(r[&quot;ping&quot;][&quot;rc&quot;] == 0 and r[&quot;tcp&quot;][&quot;rc&quot;] == 0 and r[&quot;tcp&quot;][&quot;stdout&quot;] == &quot;RN-Lab forensic test server\n&quot; for r in evidence[&quot;after&quot;].values()), &quot;Reparatur nicht bestätigt&quot;)</code> — Verlangt für beide Clients erfolgreichen Ping, erfolgreichen Originalclient und exakt die erwartete Begrüßung; bloß irgendeine Ausgabe genügt nicht.
+- L180: <code>        evidence[&quot;capture_counts&quot;] = lab.counts</code> — Übernimmt die tatsächlich kontrollierten Mitschnitt-Paketzahlen in das Ergebnisobjekt.
+- L181: <code>        (out / &quot;results.json&quot;).write_text(json.dumps(evidence, indent=2, ensure_ascii=False) + &quot;\n&quot;)</code> — Speichert das vollständige Messergebnis als lesbares JSON mit Unicode-Zeichen und abschließendem Zeilenumbruch.
+- L182: <code>    finally:</code> — Öffnet den Aufräumteil, der sowohl nach Erfolg als auch nach einer Ausnahme ausgeführt wird.
+- L183: <code>        lab.cleanup()</code> — Beendet und wartet eigene Prozesse ab, schließt Capture-Dateien und schreibt das Befehlsprotokoll.
+- L184: <code>        if &quot;SUDO_UID&quot; in os.environ:</code> — Prüft, ob der Runner über `sudo` gestartet wurde und deshalb einen ursprünglichen Benutzer kennt.
+- L185: <code>            for path in (out, *out.rglob(&quot;*&quot;)):</code> — Durchläuft dann den Ausgabeordner selbst und alle darin entstandenen Dateien und Unterordner.
+- L186: <code>                os.chown(path, int(os.environ[&quot;SUDO_UID&quot;]), int(os.environ[&quot;SUDO_GID&quot;]))</code> — Gibt deren Eigentümerschaft an die von `sudo` übermittelte Benutzer- und Gruppen-ID zurück, damit die Belege ohne Root lesbar bearbeitet werden können.
+- L187: <code>    print(&quot;Echte Vorher/Nachher-Messung abgeschlossen; 10 PCAPs. Mininet bleibt ungeprüft.&quot;)</code> — Meldet den abgeschlossenen echten Ersatzlauf und erinnert ausdrücklich daran, dass Mininet ungeprüft bleibt; bei einer vorherigen Ausnahme wird diese Erfolgsmeldung nicht erreicht.
+- L190: <code>def main():</code> — Beginnt die Kommandozeilenschnittstelle des Messrunners.
+- L191: <code>    parser = argparse.ArgumentParser(description=__doc__)</code> — Erzeugt den Argumentparser mit dem einleitenden Modultext als Hilfebeschreibung.
+- L192: <code>    parser.add_argument(&quot;--out&quot;, default=&quot;nachweise/run01&quot;)</code> — Bietet den Belegordner als Option an; der Standard `nachweise/run01` ist nur für einen noch nicht existierenden ersten Lauf geeignet.
+- L193: <code>    parser.add_argument(&quot;--holder&quot;, action=&quot;store_true&quot;, help=argparse.SUPPRESS)</code> — Definiert den internen Halteprozess-Modus als Schalter und verbirgt ihn vor der normalen Hilfe.
+- L194: <code>    args = parser.parse_args()</code> — Liest und validiert die tatsächlich übergebenen Kommandozeilenargumente.
+- L195: <code>    if args.holder:</code> — Verzweigt für interne Namespace-Halteprozesse, die keinen vollständigen Messlauf starten sollen.
+- L196: <code>        os.unshare(os.CLONE_NEWNET)</code> — Erzeugt in diesem Kindprozess den Netzwerk-Namespace für genau einen Knoten.
+- L197: <code>        print(&quot;READY&quot;, flush=True)</code> — Sendet erst nach erfolgreicher Namespace-Erzeugung `READY` und leert den Ausgabepuffer sofort.
+- L198: <code>        while True:</code> — Hält den Kindprozess anschließend dauerhaft am Leben, damit seine PID als Namespace-Zugang bestehen bleibt.
+- L199: <code>            signal.pause()</code> — Wartet ressourcensparend auf ein Signal statt in einer aktiven Endlosschleife CPU zu verbrauchen.
+- L200: <code>    out = (BASE / args.out).resolve()</code> — Löst das gewünschte Ausgabeziel relativ zum Programmordner in einen absoluten Pfad auf.
+- L201: <code>    require(out.is_relative_to(BASE / &quot;nachweise&quot;) and out != BASE / &quot;nachweise&quot;, &quot;Nur neuer Ordner unter nachweise erlaubt&quot;)</code> — Erlaubt nur echte Unterordner von `nachweise/` und nicht den Sammelordner selbst; aufgelöste Ausweichpfade werden verworfen.
+- L202: <code>    measure(out)</code> — Startet den vollständigen Messlauf erst nach dieser Pfadprüfung.
+- L205: <code>if __name__ == &quot;__main__&quot;:</code> — Sorgt dafür, dass ein Import des Moduls keine Messung oder Argumentverarbeitung startet.
+- L206: <code>    main()</code> — Ruft beim direkten Programmstart die eben definierte Kommandozeilenfunktion auf.
+
+## `auswertung.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Kennzeichnet Agent, Modell und Zugangsart für das eigene Auswertungsprogramm, damit seine Herkunft transparent bleibt.
+- L2: <code># Datum: 2026-10-29</code> — Hält das angegebene Erstellungsdatum der Auswertung fest.
+- L3: <code># Anfrage: Unabhängige Paket- und Zustandsbelege für Ü9.1/9.3/9.4/9.5/9.6 aus echten PCAPs auswerten.</code> — Nennt die konkreten Blattaufgaben und die Auswertung echter PCAP-/Zustandsbelege als Zweck dieser Datei.
+- L4: <code>&quot;&quot;&quot;Nur lesende Analyse der Belege; keine Netzänderung, keine erfundenen Messwerte.&quot;&quot;&quot;</code> — Stellt klar, dass diese Datei nur vorhandene Belege liest und weder Netzänderungen noch erfundene Messergebnisse erzeugt.
+- L5: <code>import argparse</code> — Lädt die Argumentverarbeitung für Belegordner und gewünschte Aufgabenansicht.
+- L6: <code>import json</code> — Lädt das Lesen gespeicherter JSON-Zustände und die formatierte JSON-Ausgabe.
+- L7: <code>from collections import Counter</code> — Lädt `Counter`, weil beim Routervergleich auch die Anzahl identischer Paketmerkmale stimmen muss, nicht nur deren Menge.
+- L8: <code>from pathlib import Path</code> — Lädt die Pfadklasse für Belegdateien und den Standardordner.
+- L9: <code>from pcap import read_pcap, require</code> — Importiert den eigenen strengen PCAP-Leser und die gemeinsame Fehlerprüffunktion.
+- L11: <code>BASE = Path(__file__).resolve().parent</code> — Bestimmt den Ordner dieser Datei als Bezugspunkt für den Standard-Belegpfad.
+- L12: <code>CLIENTS = (&quot;10.10.1.10&quot;, &quot;10.10.1.11&quot;)</code> — Legt beide zu prüfenden Client-IP-Adressen fest; damit wird nicht versehentlich nur der erste Client verifiziert.
+- L13: <code>SERVER = &quot;10.10.2.10&quot;</code> — Legt die Server-IP fest, nach der Paket- und Zustandstests filtern.
+- L14: <code>GREETING = b&quot;RN-Lab forensic test server\n&quot;</code> — Speichert die erwartete Originalbegrüßung als Bytes einschließlich Zeilenumbruch, weil der Datenvergleich vor der Textdekodierung erfolgen soll.
+- L17: <code>def tcp(packets, source=None):</code> — Definiert einen TCP-Filter mit optionaler zusätzlicher Quell-IP-Auswahl.
+- L18: <code>    return [p for p in packets if p.get(&quot;proto&quot;) == 6 and (source is None or p[&quot;src_ip&quot;] == source)]</code> — Gibt nur IPv4-TCP-Pakete zurück und schränkt sie bei gesetzter Quelle zusätzlich darauf ein; `get()` lässt ARP-Pakete ohne `proto` gefahrlos passieren.
+- L21: <code>def check_fault(out):</code> — Beginnt die konkrete Fehlerprüfung des unveränderten Vorher-Servermitschnitts.
+- L22: <code>    packets = read_pcap(out / &quot;vorher-server.pcap&quot;)</code> — Liest genau den Mitschnitt am Server, an dem ankommende SYNs und ausgehende Gateway-ARP-Suchen gemeinsam sichtbar sind.
+- L23: <code>    arp = [p for p in packets if p.get(&quot;arp_op&quot;) == 1 and p[&quot;arp_tpa&quot;] == &quot;10.10.2.254&quot; and p[&quot;arp_spa&quot;] == SERVER]</code> — Sammelt nur ARP-Requests des Servers nach dem falschen Gateway `.254`, nicht beliebigen ARP-Verkehr.
+- L24: <code>    require(arp, &quot;Keine serverseitige ARP-Suche nach falschem Gateway&quot;)</code> — Verlangt mindestens eine solche Suche, damit die Hypothese tatsächlich im Paketverkehr belegt ist.
+- L25: <code>    require(not any(p.get(&quot;arp_op&quot;) == 2 and p[&quot;arp_spa&quot;] == &quot;10.10.2.254&quot; for p in packets), &quot;Falsches Gateway hat geantwortet&quot;)</code> — Verlangt, dass keine ARP-Antwort mit Sender-IP `.254` im Mitschnitt steht; ein antwortendes Gateway wäre ein anderes Szenario.
+- L26: <code>    require(not tcp(packets, SERVER), &quot;Unerwartete TCP-Rückpakete vom Server&quot;)</code> — Verlangt auf diesem Interface das vollständige Fehlen serverseitiger TCP-Rückpakete vor der Reparatur.
+- L27: <code>    for client in CLIENTS:</code> — Prüft den ankommenden Hinweg getrennt für jede der beiden Clientadressen.
+- L28: <code>        syns = [p for p in tcp(packets, client) if p[&quot;flags&quot;] &amp; 0x12 == 2]</code> — Sucht Clientpakete mit gesetztem SYN und nicht gesetztem ACK, also initiale Verbindungsversuche und deren Wiederholungen.
+- L29: <code>        require(syns, &quot;SYN erreicht Server nicht&quot;)</code> — Verlangt mindestens ein solches SYN pro Client am Server; ein schon früher abgebrochener Hinweg würde die Diagnose nicht erfüllen.
+- L30: <code>        require(all(p[&quot;dst_ip&quot;] == SERVER and p[&quot;dst_mac&quot;] == &quot;02:00:00:00:02:10&quot; and p[&quot;src_mac&quot;] == &quot;02:00:00:00:02:01&quot; and p[&quot;ttl&quot;] == 63 for p in syns), &quot;Serverseitiger Hinweg unerwartet&quot;)</code> — Prüft an allen gefundenen SYNs die Server-IP, die beiden korrekten Server-LAN-MACs und TTL 63 nach einem Routerhop.
+- L31: <code>    errors = [p for p in packets if p.get(&quot;icmp_type&quot;) in (3, 11)]</code> — Sammelt beobachtete ICMP-Fehler der Typen Destination Unreachable und Time Exceeded, ohne ihre Existenz zu erfinden oder vorauszusetzen.
+- L32: <code>    return {&quot;server_arp_wrong_gateway&quot;: len(arp), &quot;arp_reply_wrong_gateway&quot;: 0, &quot;server_tcp_replies&quot;: 0, &quot;icmp_errors_on_server_interface&quot;: errors, &quot;syn_clients_reached_server&quot;: list(CLIENTS)}</code> — Gibt konkrete Fehlerbefunde und Zähler aus; die Nullwerte für ARP-Antworten und TCP-Rückpakete sind durch die vorherigen Prüfungen abgesichert.
+- L35: <code>def routed(before, after):</code> — Beginnt den Vergleich der TCP-Pakete zweier Routerinterfaces; `before` und `after` bedeuten hier vor beziehungsweise nach dem Router, nicht Reparaturphasen.
+- L36: <code>    key = lambda p: (p[&quot;src_ip&quot;], p[&quot;dst_ip&quot;], p[&quot;ip_id&quot;], p[&quot;transport&quot;])</code> — Definiert einen Zuordnungsschlüssel aus IP-Adressen, IP-ID und unveränderten Transportbytes; MAC und TTL werden absichtlich separat geprüft.
+- L37: <code>    a, b = tcp(before), tcp(after)</code> — Entfernt Nicht-TCP-Pakete aus beiden Interfaceansichten, weil diese Zuordnungsprüfung gezielt TCP behandelt.
+- L38: <code>    require(a and Counter(map(key, a)) == Counter(map(key, b)), &quot;TCP-Pakete nicht über Router zuordenbar&quot;)</code> — Verlangt nichtleeren TCP-Verkehr und gleiche Schlüsselhäufigkeiten auf beiden Seiten, damit fehlende oder zusätzliche Pakete auffallen.
+- L39: <code>    for p in a:</code> — Durchläuft jedes TCP-Paket der ersten, clientseitigen Routeransicht.
+- L40: <code>        q = next(q for q in b if key(p) == key(q))</code> — Sucht dazu ein Paket mit demselben Schlüssel in der zweiten, serverseitigen Ansicht.
+- L41: <code>        outgoing = p[&quot;src_ip&quot;] in CLIENTS</code> — Erkennt an der Quell-IP, ob dieses Paket vom Client zum Server oder in Gegenrichtung läuft.
+- L42: <code>        require(p[&quot;ttl&quot;] - q[&quot;ttl&quot;] == (1 if outgoing else -1), &quot;TTL-Änderung falsch&quot;)</code> — Prüft die TTL-Differenz richtungsabhängig: zur Serverseite sinkt sie um eins, in der umgekehrten Betrachtung ist das Vorzeichen anders.
+- L43: <code>        client_mac = &quot;02:00:00:00:01:&quot; + (&quot;10&quot; if (p[&quot;src_ip&quot;] if outgoing else p[&quot;dst_ip&quot;]) == CLIENTS[0] else &quot;11&quot;)</code> — Bestimmt aus der beteiligten Client-IP die feste zugehörige Client-MAC für genau diesen Flow.
+- L44: <code>        expected_a = (client_mac, &quot;02:00:00:00:01:01&quot;)</code> — Legt die erwarteten Client-LAN-Endpunkte in Hinweg-Reihenfolge fest: Client und clientseitiges Routerinterface.
+- L45: <code>        expected_b = (&quot;02:00:00:00:02:01&quot;, &quot;02:00:00:00:02:10&quot;)</code> — Legt die erwarteten Server-LAN-Endpunkte ebenfalls in Hinweg-Reihenfolge fest: serverseitiges Routerinterface und Server.
+- L46: <code>        require((p[&quot;src_mac&quot;], p[&quot;dst_mac&quot;]) == expected_a[::1 if outgoing else -1], &quot;LAN1-MACs falsch&quot;)</code> — Vergleicht die MACs auf der Clientseite mit dieser Reihenfolge oder bei Rückverkehr mit ihrer Umkehrung.
+- L47: <code>        require((q[&quot;src_mac&quot;], q[&quot;dst_mac&quot;]) == expected_b[::1 if outgoing else -1], &quot;LAN2-MACs falsch&quot;)</code> — Prüft denselben richtungsabhängigen MAC-Wechsel auf der Serverseite, statt überall die Client-MAC zu erwarten.
+- L48: <code>    return len(a)</code> — Liefert die Anzahl der über beide Interfaces zugeordneten TCP-Pakete als zusammenfassenden Messwert zurück.
+- L51: <code>def stream(packets):</code> — Beginnt das Zusammensetzen der Nutzdaten eines bereits ausgewählten einseitigen TCP-Stroms.
+- L52: <code>    data = [p for p in packets if p.get(&quot;payload&quot;)]</code> — Behält nur Pakete mit nichtleeren Nutzdaten; reine ACKs tragen keine Bytes zum Anwendungsinhalt bei.
+- L53: <code>    require(data, &quot;TCP-Nutzdaten fehlen&quot;)</code> — Verlangt wirklich vorhandene Daten, damit ein leerer Strom nicht als empfangene Begrüßung gilt.
+- L54: <code>    origin = min(p[&quot;seq&quot;] for p in data)</code> — Nimmt die kleinste Nutzdaten-Sequenznummer als Startpunkt der relativen Bytepositionen.
+- L55: <code>    octets = {}</code> — Legt ein Wörterbuch an, das für jede relative Position genau den dort beobachteten Bytewert speichert.
+- L56: <code>    for p in data:</code> — Durchläuft jedes nutzdatenhaltige Paket, auch wenn mehrere Pakete denselben Bereich wiederholen.
+- L57: <code>        for i, byte in enumerate(bytes.fromhex(p[&quot;payload&quot;])):</code> — Dekodiert dessen Hex-Nutzdaten und betrachtet jedes Byte mit seinem Offset innerhalb dieses Pakets.
+- L58: <code>            index = p[&quot;seq&quot;] - origin + i</code> — Berechnet daraus die Position dieses Bytes im gesamten ausgewählten TCP-Strom.
+- L59: <code>            require(index not in octets or octets[index] == byte, &quot;Widersprüchliche Retransmission&quot;)</code> — Erlaubt doppelte Positionen nur mit identischem Bytewert; widersprüchliche Wiederholungen machen den Beleg ungültig.
+- L60: <code>            octets[index] = byte</code> — Merkt sich den beobachteten Bytewert an seiner Stromposition.
+- L61: <code>    require(set(octets) == set(range(len(octets))), &quot;Lücke im TCP-Strom&quot;)</code> — Prüft, ob alle Positionen vom Beginn bis zum Ende lückenlos vorhanden sind, statt fehlende Bytes zu überspringen.
+- L62: <code>    return bytes(octets[i] for i in range(len(octets)))</code> — Baut die Bytes in Positionsreihenfolge wieder zu einem vollständigen Anwendungsinhalt zusammen.
+- L65: <code>def check_flow(packets, client):</code> — Beginnt die Prüfung eines erfolgreichen TCP-Flows zwischen dem gewählten Client und dem Server.
+- L66: <code>    flow = [p for p in tcp(packets) if {p[&quot;src_ip&quot;], p[&quot;dst_ip&quot;]} == {client, SERVER}]</code> — Filtert beide Richtungen dieses IP-Paars; eine spätere Portprüfung stellt sicher, dass nicht mehrere Port-Flows vermischt wurden.
+- L67: <code>    starts = [p for p in flow if p[&quot;src_ip&quot;] == client and p[&quot;flags&quot;] &amp; 0x12 == 2]</code> — Sammelt die initialen SYNs des ausgewählten Clients ohne ACK-Bit.
+- L68: <code>    require(len(starts) == 1, &quot;Genau ein initiales SYN erwartet&quot;)</code> — Verlangt für diesen erfolgreichen gespeicherten Lauf genau einen initialen SYN; SYN-Wiederholungen würden diese strenge Erwartung verletzen.
+- L69: <code>    syn = starts[0]</code> — Merkt sich das gefundene SYN als Bezug für Ports und Sequenznummern.
+- L70: <code>    require(syn[&quot;dport&quot;] == 5000, &quot;Serverport falsch&quot;)</code> — Kontrolliert, dass es wirklich an den Original-Serverport 5000 adressiert ist.
+- L71: <code>    require(all((p[&quot;sport&quot;], p[&quot;dport&quot;]) == ((syn[&quot;sport&quot;], 5000) if p[&quot;src_ip&quot;] == client else (5000, syn[&quot;sport&quot;])) for p in flow), &quot;Anderer TCP-Flow enthalten&quot;)</code> — Verlangt für jedes Paket dieselbe Portkombination in der richtigen Richtung, damit keine zweite TCP-Verbindung in den Flow hineinrutscht.
+- L72: <code>    synacks = [p for p in flow if p[&quot;src_ip&quot;] == SERVER and p[&quot;flags&quot;] &amp; 0x12 == 0x12 and p[&quot;ack&quot;] == syn[&quot;seq&quot;] + 1]</code> — Sucht serverseitige SYN-ACKs, deren ACK genau das initiale Client-SYN mit dessen Sequenznummer plus eins bestätigt.
+- L73: <code>    require(len(synacks) == 1, &quot;Passendes SYN-ACK fehlt&quot;)</code> — Verlangt genau ein solches passendes SYN-ACK als Beleg für den nun funktionierenden Rückweg.
+- L74: <code>    require(any(p[&quot;src_ip&quot;] == client and p[&quot;flags&quot;] &amp; 16 and p[&quot;ack&quot;] == synacks[0][&quot;seq&quot;] + 1 for p in flow), &quot;Drittes Handshake-ACK fehlt&quot;)</code> — Verlangt ein Client-ACK, das die Server-SYN-Sequenz plus eins bestätigt; damit wird die dritte Handshake-Stufe belegt.
+- L75: <code>    require(not any(p[&quot;flags&quot;] &amp; 4 for p in flow), &quot;Unerwartetes RST&quot;)</code> — Verwirft den Flow bei irgendeinem RST-Bit, weil ein Verbindungsabbruch kein normaler erfolgreicher Abschluss wäre.
+- L76: <code>    fins = [p for p in flow if p[&quot;flags&quot;] &amp; 1]</code> — Sammelt alle TCP-Pakete mit FIN-Bit als Kandidaten für den geregelten Verbindungsabbau.
+- L77: <code>    require(len(fins) == 2 and len({p[&quot;src_ip&quot;] for p in fins}) == 2, &quot;Beidseitiger FIN fehlt&quot;)</code> — Verlangt genau zwei FINs von zwei verschiedenen Seiten, damit beide Richtungen geschlossen werden.
+- L78: <code>    for fin in fins:</code> — Prüft anschließend die Bestätigung jedes dieser beiden FINs einzeln.
+- L79: <code>        end = fin[&quot;seq&quot;] + len(bytes.fromhex(fin[&quot;payload&quot;])) + 1</code> — Berechnet die erwartete Bestätigungsnummer aus FIN-Sequenz, eventuellen Nutzdaten und dem einen von FIN verbrauchten Sequenzschritt.
+- L80: <code>        require(any(p[&quot;src_ip&quot;] == fin[&quot;dst_ip&quot;] and p[&quot;flags&quot;] &amp; 16 and p[&quot;ack&quot;] == end for p in flow), &quot;FIN nicht bestätigt&quot;)</code> — Verlangt ein ACK der Gegenstelle mit genau dieser Endposition; ein bloß gesichtetes FIN allein genügt nicht.
+- L81: <code>    greeting = stream([p for p in flow if p[&quot;src_ip&quot;] == SERVER])</code> — Rekonstruiert nur die vom Server gesendeten Nutzdaten, denn die Originalbegrüßung läuft vom Server zum Client.
+- L82: <code>    require(greeting == GREETING, &quot;Originalserver-Begrüßung falsch&quot;)</code> — Vergleicht die rekonstruierten Bytes exakt mit der Originalbegrüßung, nicht nur mit irgendeinem lesbaren Text.
+- L83: <code>    return dict(client=client, client_port=syn[&quot;sport&quot;], server_port=5000, packets=len(flow), syn_frame=syn[&quot;frame&quot;], synack_frame=synacks[0][&quot;frame&quot;], greeting=greeting.decode(), greeting_bytes=len(greeting), fin_frames=[p[&quot;frame&quot;] for p in fins], rst_count=0)</code> — Gibt Clientport, Serverport, Paket- und Frameangaben, dekodierte Begrüßung, Bytelänge und bestätigte RST-Freiheit als lesbares Ergebnis zurück.
+- L86: <code>def analyse(out):</code> — Beginnt die gemeinsame Analyse des gesamten gespeicherten Messlaufs.
+- L87: <code>    state = json.loads((out / &quot;results.json&quot;).read_text())</code> — Liest `results.json` als Rohzustands- und Prozessprotokoll ein.
+- L88: <code>    packets = {}</code> — Legt den Speicher für die geparsten Mitschnitte an, damit sie für mehrere Prüfungen wiederverwendet werden können.
+- L89: <code>    for name, count in state[&quot;capture_counts&quot;].items():</code> — Durchläuft genau die im Messprotokoll verzeichneten Capture-Namen mit ihren damals bestätigten Zählern.
+- L90: <code>        packets[name] = read_pcap(out / name)</code> — Liest den jeweiligen echten Mitschnitt erneut mit dem eigenen Parser.
+- L91: <code>        require(len(packets[name]) == count, &quot;Erfasste Paketzahl verändert&quot;)</code> — Verlangt dieselbe Paketanzahl wie im Messprotokoll; das erkennt Zählerabweichungen, ist aber kein Ersatz für einen Dateihash.
+- L92: <code>    require(len(packets) == 10, &quot;Zehn Mitschnitte erwartet&quot;)</code> — Verlangt insgesamt zehn Mitschnitte, passend zu fünf Messpunkten in zwei Phasen.
+- L93: <code>    fault = check_fault(out)</code> — Führt die konkrete Vorher-Fehlerprüfung erneut auf dem gespeicherten Server-PCAP aus.
+- L94: <code>    require(&quot;via 10.10.2.254&quot; in state[&quot;fault_state&quot;][&quot;server&quot;][&quot;route_get&quot;], &quot;Routing-Evidenz fehlt&quot;)</code> — Verlangt zusätzlich die falsche Gatewaywahl in der damaligen Server-Routenentscheidung als unabhängigen Zustandsbeleg.
+- L95: <code>    require(&quot;10.10.2.254&quot; in state[&quot;fault_state&quot;][&quot;server&quot;][&quot;neigh&quot;] and &quot;FAILED&quot; in state[&quot;fault_state&quot;][&quot;server&quot;][&quot;neigh&quot;], &quot;Neighbor-Evidenz fehlt&quot;)</code> — Verlangt `.254` und `FAILED` in der Server-Neighbor-Ausgabe; das ist eine gezielte Textprüfung des gespeicherten Zustands, kein neuer ARP-Test.
+- L96: <code>    require(&quot;via 10.10.2.1 &quot; in state[&quot;repaired_state&quot;][&quot;server&quot;][&quot;route_get&quot;], &quot;Reparierte Route fehlt&quot;)</code> — Prüft die richtige Gatewaywahl `.1` im nachher gespeicherten `route get`; das folgende Leerzeichen verhindert eine Verwechslung mit `.254`.
+- L97: <code>    routed_before = routed(packets[&quot;vorher-router0.pcap&quot;], packets[&quot;vorher-router1.pcap&quot;])</code> — Ordnet die TCP-Pakete der beiden Routerinterfaces in der Vorher-Phase zu und prüft dabei TTL und MACs.
+- L98: <code>    routed_after = routed(packets[&quot;nachher-router0.pcap&quot;], packets[&quot;nachher-router1.pcap&quot;])</code> — Führt dieselbe Routerprüfung auf der Nachher-Phase durch, damit nicht nur der kaputte Zustand erklärt wird.
+- L99: <code>    flows = [check_flow(packets[&quot;nachher-server.pcap&quot;], client) for client in CLIENTS]</code> — Prüft die beiden erfolgreichen TCP-Flows im Nachher-Servermitschnitt und sammelt ihre jeweiligen Verbindungsdetails.
+- L100: <code>    for host in (&quot;client1&quot;, &quot;client2&quot;):</code> — Geht für die Ende-zu-Ende-Kontrolle erneut beide Clientnamen durch, die im Rohprotokoll als Schlüssel stehen.
+- L101: <code>        require(state[&quot;before&quot;][host][&quot;ping&quot;][&quot;rc&quot;] != 0 and state[&quot;before&quot;][host][&quot;tcp&quot;][&quot;rc&quot;] != 0, &quot;Vorherige Störung fehlt&quot;)</code> — Verlangt pro Client die ursprünglich fehlgeschlagenen Ping- und TCP-Prozessstatus, damit das Vorher-Symptom belegt bleibt.
+- L102: <code>        require(state[&quot;after&quot;][host][&quot;ping&quot;][&quot;rc&quot;] == 0 and state[&quot;after&quot;][host][&quot;tcp&quot;][&quot;rc&quot;] == 0, &quot;Ende-zu-Ende-Reparatur fehlt&quot;)</code> — Verlangt pro Client erfolgreiche Ping- und TCP-Prozessstatus nach der Reparatur, nicht nur passende Paketmuster.
+- L103: <code>        echo = [p for p in packets[f&quot;nachher-{host}.pcap&quot;] if p.get(&quot;icmp_type&quot;) == 0 and p[&quot;src_ip&quot;] == SERVER]</code> — Sammelt auf dem jeweiligen Nachher-Clientinterface ICMP-Echo-Replies mit Server-Quelladresse.
+- L104: <code>        require(len(echo) == 3, &quot;Drei Echo-Replies pro Client fehlen&quot;)</code> — Verlangt genau drei dieser Antworten je Client; eine vollständige ICMP-ID-/Sequenzzuordnung wird hier nicht zusätzlich implementiert.
+- L105: <code>    return {&quot;provenance&quot;: state[&quot;provenance&quot;], &quot;fault&quot;: fault, &quot;routed_tcp_before&quot;: routed_before, &quot;routed_tcp_after&quot;: routed_after, &quot;flows&quot;: flows, &quot;capture_counts&quot;: state[&quot;capture_counts&quot;]}</code> — Liefert Herkunft, Fehlerbefund, Routervergleich, Flowdetails und bestätigte Capture-Zähler als Gesamtergebnis zurück.
+- L108: <code>def main():</code> — Beginnt die Kommandozeilenschnittstelle der rein lesenden Auswertung.
+- L109: <code>    parser = argparse.ArgumentParser(description=__doc__)</code> — Erstellt den Argumentparser mit der Beschreibung dieses Moduls als Hilfetext.
+- L110: <code>    parser.add_argument(&quot;--out&quot;, type=Path, default=BASE / &quot;nachweise/run01&quot;)</code> — Erlaubt einen alternativen Belegordner als `Path`; ohne Angabe wird der vorhandene Lauf unter `ueb09/nachweise/run01` gelesen.
+- L111: <code>    parser.add_argument(&quot;--task&quot;, choices=(&quot;9.1&quot;, &quot;9.3&quot;, &quot;9.4&quot;, &quot;9.5&quot;, &quot;9.6&quot;))</code> — Begrenzt die optionale Aufgabenansicht auf die tatsächlich im Blatt vorhandenen Nummern, ohne eine 9.2 zu erfinden.
+- L112: <code>    args = parser.parse_args()</code> — Liest die Kommandozeile und verwirft ungültige Optionen vor der Analyse.
+- L113: <code>    result = analyse(args.out)</code> — Führt immer zuerst die komplette Analyse aus, auch wenn später nur eine Teilansicht ausgegeben wird.
+- L114: <code>    state = json.loads((args.out / &quot;results.json&quot;).read_text())</code> — Liest die Rohzustände noch einmal, weil manche Aufgabenansichten ausführlichere Zustandsfelder als das Gesamtergebnis zeigen sollen.
+- L115: <code>    sections = {&quot;9.1&quot;: {&quot;initial&quot;: state[&quot;initial&quot;], &quot;baseline&quot;: state[&quot;baseline&quot;], &quot;before&quot;: state[&quot;before&quot;], &quot;neighbors&quot;: state[&quot;fault_state&quot;]}, &quot;9.3&quot;: result, &quot;9.4&quot;: {&quot;fault&quot;: result[&quot;fault&quot;], &quot;route_get&quot;: state[&quot;fault_state&quot;][&quot;server&quot;][&quot;route_get&quot;], &quot;neigh&quot;: state[&quot;fault_state&quot;][&quot;server&quot;][&quot;neigh&quot;]}, &quot;9.5&quot;: {&quot;before&quot;: state[&quot;fault_state&quot;][&quot;server&quot;], &quot;after&quot;: state[&quot;repaired_state&quot;][&quot;server&quot;]}, &quot;9.6&quot;: {&quot;after&quot;: state[&quot;after&quot;], &quot;flows&quot;: result[&quot;flows&quot;]}}</code> — Ordnet jeder Aufgabe ihren passenden JSON-Ausschnitt zu: Ausgangszustand, Paketfluss, Hypothesenbelege, Routenvergleich oder erfolgreiche Nachtests.
+- L116: <code>    print(json.dumps(sections[args.task] if args.task else result, indent=2, ensure_ascii=False))</code> — Gibt die gewählte Teilansicht oder ohne `--task` das Gesamtergebnis mit Einrückung und echten Unicode-Zeichen aus; es wird keine Datei überschrieben.
+- L119: <code>if __name__ == &quot;__main__&quot;:</code> — Verhindert einen automatischen Kommandozeilenlauf beim Import, etwa wenn der Messrunner nur `check_fault` benötigt.
+- L120: <code>    main()</code> — Startet beim direkten Aufruf die Argumentverarbeitung und Analyseausgabe.
+
+## `ue9.1/pruefen.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Kennzeichnet Agent, Modell und Zugangsart dieses eigenen Ü9.1-Starters, damit die KI-Unterstützung auch in der kleinen Datei sichtbar ist.
+- L2: <code># Datum: 2026-10-29</code> — Nennt das angegebene Erstellungsdatum des Starters für die Erstbeobachtung.
+- L3: <code># Anfrage: Für Ü9.1 eine lesende CLI mit den verifizierten Originalbelegen bereitstellen.</code> — Beschreibt den Auftrag, die verifizierten Originalbelege über eine lesende Ü9.1-Kommandozeile zugänglich zu machen.
+- L4: <code>&quot;&quot;&quot;Ü9.1: Belege ohne Rootrechte lesen; keine Konfiguration ändern.&quot;&quot;&quot;</code> — Betont, dass die Bestandsaufnahme vorhandene Belege ohne Root liest und keine Konfiguration verändert.
+- L5: <code>import subprocess</code> — Lädt die Prozessschnittstelle, weil die zentrale Analyse als eigenes Python-Programm aufgerufen wird.
+- L6: <code>import sys</code> — Lädt den aktuell verwendeten Python-Interpreterpfad und die weiterzureichenden Kommandozeilenargumente.
+- L7: <code>from pathlib import Path</code> — Lädt die Pfadklasse, damit die zentrale Datei unabhängig vom aktuellen Arbeitsverzeichnis gefunden wird.
+- L9: <code>BASE = Path(__file__).resolve().parents[1]</code> — Geht vom Speicherort dieses Starters zwei Verzeichnisebenen zum gemeinsamen Ordner `ueb09/` zurück.
+- L12: <code>if __name__ == &quot;__main__&quot;:</code> — Startet die Anzeige nur beim direkten Aufruf; ein Import dieses Starters soll keine Analyse auslösen.
+- L13: <code>    raise SystemExit(subprocess.call([sys.executable, &quot;-B&quot;, str(BASE / &quot;auswertung.py&quot;), &quot;--task&quot;, &quot;9.1&quot;, *sys.argv[1:]]))</code> — Führt `auswertung.py` mit demselben Interpreter, ohne Bytecode und mit `--task 9.1` aus, reicht Zusatzargumente weiter und beendet sich mit dessen Status; gezeigt werden Ausgangszustand und erste Tests.
+
+## `ue9.3/pruefen.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Kennzeichnet die KI-Herkunft des eigenen Ü9.3-Starters mit Agent, Modell und Zugangsart.
+- L2: <code># Datum: 2026-10-29</code> — Hält das angegebene Erstellungsdatum dieser Paketfluss-Anzeige fest.
+- L3: <code># Anfrage: Für Ü9.3 eine lesende CLI mit den verifizierten Originalbelegen bereitstellen.</code> — Nennt als Aufgabe, eine rein lesende CLI für die verifizierten Paketflussbelege zu Ü9.3 bereitzustellen.
+- L4: <code>&quot;&quot;&quot;Ü9.3: Belege ohne Rootrechte lesen; keine Konfiguration ändern.&quot;&quot;&quot;</code> — Macht deutlich, dass diese Ü9.3-Ansicht ohne Root auskommt und das untersuchte Netz nicht verändert.
+- L5: <code>import subprocess</code> — Lädt `subprocess` für den Aufruf der gemeinsamen Auswertungsdatei.
+- L6: <code>import sys</code> — Lädt `sys`, um denselben Interpreter zu benutzen und zusätzliche Optionen vom eigenen Aufruf zu übernehmen.
+- L7: <code>from pathlib import Path</code> — Lädt `Path` für den aus dem Dateistandort abgeleiteten Analysepfad.
+- L9: <code>BASE = Path(__file__).resolve().parents[1]</code> — Bestimmt `ueb09/` als gemeinsamen Elternordner von Aufgabenordner und zentraler Auswertung.
+- L12: <code>if __name__ == &quot;__main__&quot;:</code> — Beschränkt den tatsächlichen Analyseaufruf auf den direkten Programmstart.
+- L13: <code>    raise SystemExit(subprocess.call([sys.executable, &quot;-B&quot;, str(BASE / &quot;auswertung.py&quot;), &quot;--task&quot;, &quot;9.3&quot;, *sys.argv[1:]]))</code> — Ruft die zentrale Auswertung ohne Bytecode mit `--task 9.3` auf, reicht weitere Optionen und Rückgabecode durch; dieser Abschnitt zeigt die gesamte Paketflussanalyse.
+
+## `ue9.4/pruefen.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Nennt Agent, Modell und Zugangsart zur KI-Kennzeichnung des eigenen Ü9.4-Starters.
+- L2: <code># Datum: 2026-10-29</code> — Dokumentiert das angegebene Erstellungsdatum des Starters für die Hypothesenbelege.
+- L3: <code># Anfrage: Für Ü9.4 eine lesende CLI mit den verifizierten Originalbelegen bereitstellen.</code> — Hält den konkreten Auftrag fest, die verifizierten Belege zur Ü9.4-Hypothesenprüfung lesend anzuzeigen.
+- L4: <code>&quot;&quot;&quot;Ü9.4: Belege ohne Rootrechte lesen; keine Konfiguration ändern.&quot;&quot;&quot;</code> — Stellt klar, dass die Hypothesenansicht keine Rootrechte und keine Netzwerkänderung benötigt.
+- L5: <code>import subprocess</code> — Lädt die Möglichkeit, das gemeinsame Analyseprogramm als Kindprozess zu starten.
+- L6: <code>import sys</code> — Lädt Interpreterpfad und Argumentliste, damit der Starter die Umgebung des Aufrufers verwendet.
+- L7: <code>from pathlib import Path</code> — Lädt Dateipfadoperationen, damit der zentrale Analysator zuverlässig gefunden wird.
+- L9: <code>BASE = Path(__file__).resolve().parents[1]</code> — Leitet den gemeinsamen Blattordner aus dem tatsächlichen Standort von `ue9.4/pruefen.py` ab.
+- L12: <code>if __name__ == &quot;__main__&quot;:</code> — Verhindert eine unbeabsichtigte Auswertung, falls diese kleine Datei nur importiert wird.
+- L13: <code>    raise SystemExit(subprocess.call([sys.executable, &quot;-B&quot;, str(BASE / &quot;auswertung.py&quot;), &quot;--task&quot;, &quot;9.4&quot;, *sys.argv[1:]]))</code> — Wählt bei der zentralen Auswertung `--task 9.4`, vermeidet Bytecode, reicht Zusatzoptionen weiter und übernimmt den Prozessstatus; ausgegeben werden Paketfehlerbefund, Serverroute und Neighbor-Zustand.
+
+## `ue9.5/pruefen.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Kennzeichnet die KI-Herkunft dieser eigenen Ü9.5-Anzeige mit Agent, Modell und Zugangsart.
+- L2: <code># Datum: 2026-10-29</code> — Nennt das angegebene Erstellungsdatum des Starters für den Reparaturvergleich.
+- L3: <code># Anfrage: Für Ü9.5 eine lesende CLI mit den verifizierten Originalbelegen bereitstellen.</code> — Beschreibt den Auftrag, zu Ü9.5 eine lesende Anzeige der verifizierten Originalbelege bereitzustellen.
+- L4: <code>&quot;&quot;&quot;Ü9.5: Belege ohne Rootrechte lesen; keine Konfiguration ändern.&quot;&quot;&quot;</code> — Verhindert ein wichtiges Missverständnis: Dieser Starter verändert trotz des Themas Reparatur selbst keine Konfiguration und braucht kein Root.
+- L5: <code>import subprocess</code> — Lädt `subprocess`, um nur die vorhandene zentrale Analyse aufzurufen statt eine zweite Reparaturlogik zu bauen.
+- L6: <code>import sys</code> — Lädt `sys` für den Interpreterpfad und die unverändert weitergereichten Zusatzargumente.
+- L7: <code>from pathlib import Path</code> — Lädt `Path`, damit der gemeinsame Auswertungsort vom Dateistandort aus berechnet wird.
+- L9: <code>BASE = Path(__file__).resolve().parents[1]</code> — Bestimmt den Blattordner oberhalb von `ue9.5/` als Basis für `auswertung.py`.
+- L12: <code>if __name__ == &quot;__main__&quot;:</code> — Lässt die Ausgabe nur beim direkten Start dieser Datei laufen, nicht bei einem Import.
+- L13: <code>    raise SystemExit(subprocess.call([sys.executable, &quot;-B&quot;, str(BASE / &quot;auswertung.py&quot;), &quot;--task&quot;, &quot;9.5&quot;, *sys.argv[1:]]))</code> — Startet die gemeinsame Auswertung ohne Bytecode mit `--task 9.5`, übergibt Zusatzargumente und beendet sich mit demselben Rückgabecode; gezeigt wird der gespeicherte Serverzustand vor und nach der Reparatur.
+
+## `ue9.6/pruefen.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Macht die KI-Herkunft des eigenen Ü9.6-Starters durch Agent-, Modell- und Zugangsangabe sichtbar.
+- L2: <code># Datum: 2026-10-29</code> — Hält das angegebene Erstellungsdatum dieses Nachprüfungs-Starters fest.
+- L3: <code># Anfrage: Für Ü9.6 eine lesende CLI mit den verifizierten Originalbelegen bereitstellen.</code> — Nennt als Auftrag die lesende Kommandozeilenanzeige der verifizierten Originalbelege für Ü9.6.
+- L4: <code>&quot;&quot;&quot;Ü9.6: Belege ohne Rootrechte lesen; keine Konfiguration ändern.&quot;&quot;&quot;</code> — Erklärt, dass die Reparaturverifikation hier gespeicherte Daten ohne Root liest, nicht das Netzwerk erneut verändert.
+- L5: <code>import subprocess</code> — Lädt den Kindprozessaufruf für die bereits vorhandene zentrale Auswertung.
+- L6: <code>import sys</code> — Lädt den aktuellen Interpreter und weitere Argumente, damit Optionen wie `--out` bis zur Analyse gelangen.
+- L7: <code>from pathlib import Path</code> — Lädt die Pfadklasse für den stabilen Zugriff auf `auswertung.py`.
+- L9: <code>BASE = Path(__file__).resolve().parents[1]</code> — Berechnet `ueb09/` aus dem Standort im Aufgabenordner und bleibt dadurch unabhängig vom Aufrufverzeichnis.
+- L12: <code>if __name__ == &quot;__main__&quot;:</code> — Sorgt dafür, dass nur ein direkter Start die Nachher-Ansicht tatsächlich ausführt.
+- L13: <code>    raise SystemExit(subprocess.call([sys.executable, &quot;-B&quot;, str(BASE / &quot;auswertung.py&quot;), &quot;--task&quot;, &quot;9.6&quot;, *sys.argv[1:]]))</code> — Ruft die zentrale Analyse mit `--task 9.6` und deaktiviertem Bytecode auf, reicht weitere Argumente sowie den Exitstatus durch; ausgegeben werden erfolgreiche Ende-zu-Ende-Tests und geprüfte TCP-Flows.
+
+## `test_nachweise.py`
+
+- L1: <code># KI-Kennzeichnung (RN WS26): Hermes Agent; OpenAI gpt-6.1-sol; ChatGPT or Codex Subscription.</code> — Kennzeichnet Tool, Modell und Zugangsart der eigenen Tests.
+- L2: <code># Datum: 2026-10-29</code> — Hält das tatsächliche Erstellungsdatum für die KI-Kennzeichnung fest.
+- L3: <code># Anfrage: Blatt09-Belege, Originaltreue, Parserfehler, Isolation, CLI und Zeilenerklärungen unabhängig testen.</code> — Nennt den Testauftrag, damit die direkt übernommene Testlogik nachvollziehbar bleibt.
+- L4: <code>&quot;&quot;&quot;Offline-Regressionen; keine Netzwerkänderung, keine privilegierte Ausführung.&quot;&quot;&quot;</code> — Grenzt die Tests auf Offline-Regressionen statt eine neue privilegierte Messung ein.
+- L5: <code>import copy</code> — Lädt tiefe Kopien, damit kaputte Testpakete niemals die Originalpakete verändern.
+- L6: <code>import html</code> — Lädt HTML-Decodierung, um maskierte Quelltextspannen mit dem echten Code zu vergleichen.
+- L7: <code>import json</code> — Lädt JSON für den Vergleich der Zustandsdateien und CLI-Ausgaben.
+- L8: <code>import re</code> — Lädt reguläre Ausdrücke zum Lesen von Dateisektionen und Zeilenbelegen.
+- L9: <code>import struct</code> — Lädt Binärformatierung, um PCAP-Köpfe in anderer Bytefolge zu erzeugen.
+- L10: <code>import subprocess</code> — Lädt Prozessaufrufe für die echte unabhängige tcpdump-Prüfung und CLI-Tests.
+- L11: <code>import tempfile</code> — Lädt automatisch bereinigte Arbeitsordner für beschädigte Testdateien.
+- L12: <code>import unittest</code> — Lädt die Testbibliothek mit Assertions und automatischer Testsuche.
+- L13: <code>import zipfile</code> — Lädt ZIP-Unterstützung zum byteweisen Vergleich der gelieferten Originaldateien.
+- L14: <code>from pathlib import Path</code> — Lädt objektorientierte Pfade für Belege und Dokumentation.
+- L15: <code>from unittest.mock import Mock, patch</code> — Lädt Mock und patch, um negative Schutzlogik ohne reale Netzänderungen zu testen.
+- L16: <code>import auswertung</code> — Importiert die tatsächlich zu prüfende fachliche Auswertung.
+- L17: <code>import messen</code> — Importiert den Messrunner, ohne dessen main-Funktion auszuführen.
+- L18: <code>import pcap</code> — Importiert den tatsächlichen PCAP-Parser statt eines vereinfachten Testersatzes.
+- L20: <code>BASE = Path(__file__).resolve().parent</code> — Bestimmt den Testordner aus der Datei, unabhängig vom aktuellen Arbeitsverzeichnis.
+- L21: <code>OUT = BASE / &quot;nachweise/run01&quot;</code> — Wählt ausschließlich die gesicherten Originalbelege des Laufs run01.
+- L24: <code>class EvidenceTests(unittest.TestCase):</code> — Bündelt die Testfälle als von unittest automatisch auffindbare Testklasse.
+- L25: <code>    def test_complete_evidence(self):</code> — Definiert die vollständige positive Gegenprobe aller gespeicherten Belege.
+- L26: <code>        result = auswertung.analyse(OUT)</code> — Führt die echte Auswertung erneut aus und erhält nur bei bestandenen Bedingungen ein Ergebnis.
+- L27: <code>        self.assertEqual(len(result[&quot;flows&quot;]), 2)</code> — Verlangt zwei erfolgreich ausgewertete Clientverbindungen statt nur einer.
+- L28: <code>        self.assertEqual(result[&quot;fault&quot;][&quot;server_arp_wrong_gateway&quot;], 12)</code> — Prüft die tatsächlich gesicherte Zahl erfolgloser Gateway-ARP-Anfragen dieses Laufs.
+- L29: <code>        self.assertEqual([f[&quot;greeting_bytes&quot;] for f in result[&quot;flows&quot;]], [28, 28])</code> — Prüft für beide Clients die bestätigte Länge der Originalbegrüßung.
+- L30: <code>        self.assertEqual(json.loads((OUT / &quot;auswertung.json&quot;).read_text()), result)</code> — Vergleicht gespeicherte und neu errechnete Analyse vollständig, damit keine alten JSON-Werte unbemerkt bleiben.
+- L32: <code>    def test_original_archive(self):</code> — Beginnt den Test, dass keine Kursvorlage beim Lösen verändert wurde.
+- L33: <code>        with zipfile.ZipFile(BASE / &quot;Angabe/uebb9_tempplate.zip&quot;) as archive:</code> — Öffnet das gelieferte ZIP nur lesend als unveränderte Referenz.
+- L34: <code>            for name in archive.namelist():</code> — Untersucht jede vom Archiv benannte Originaldatei, nicht nur den Starter.
+- L35: <code>                self.assertEqual((BASE / &quot;Angabe&quot; / name).read_bytes(), archive.read(name))</code> — Vergleicht die entpackte Datei bytegenau mit dem zugehörigen Archivinhalt.
+- L37: <code>    def test_independent_tcpdump_counts(self):</code> — Definiert den von unserem Python-Parser unabhängigen Mitschnitt-Zähltest.
+- L38: <code>        state = json.loads((OUT / &quot;results.json&quot;).read_text())</code> — Liest die beim tatsächlichen Capture gespeicherten Zähler.
+- L39: <code>        for name, count in state[&quot;capture_counts&quot;].items():</code> — Geht alle zehn Mitschnittnamen mit der zugehörigen Erwartung durch.
+- L40: <code>            with self.subTest(name=name):</code> — Kennzeichnet Fehler mit dem betroffenen Mitschnittnamen für die Fehlersuche.
+- L41: <code>                result = subprocess.run([&quot;tcpdump&quot;, &quot;-nn&quot;, &quot;-r&quot;, str(OUT / name)], capture_output=True, text=True, check=True)</code> — Lässt tcpdump jedes gespeicherte PCAP tatsächlich lesen; ein Decoderfehler bricht den Test ab.
+- L42: <code>                self.assertEqual(len(result.stdout.splitlines()), count)</code> — Vergleicht die Anzahl dekodierter Paketzeilen mit dem Capture-Zähler.
+- L43: <code>                capture_log = (OUT / (name + &quot;.txt&quot;)).read_text()</code> — Liest den unveränderten Status des entsprechenden dumpcap-Prozesses.
+- L44: <code>                self.assertIn(f&quot;Packets captured: {count}&quot;, capture_log)</code> — Prüft, dass der erwartete Zähler auch im echten Capture-Protokoll vorkommt.
+- L46: <code>    def test_cli_all_tasks(self):</code> — Beginnt die End-to-End-CLI-Prüfung aller Aufgabenstarter ohne Rootrechte.
+- L47: <code>        for task in (&quot;9.1&quot;, &quot;9.3&quot;, &quot;9.4&quot;, &quot;9.5&quot;, &quot;9.6&quot;):</code> — Listet genau die fünf in der Angabe vorhandenen Aufgabennummern auf.
+- L48: <code>            result = subprocess.run([&quot;python3&quot;, &quot;-B&quot;, str(BASE / (&quot;ue&quot; + task) / &quot;pruefen.py&quot;)], cwd=BASE.parent, capture_output=True, text=True, check=True)</code> — Startet jede CLI aus einem anderen Arbeitsordner und verlangt einen erfolgreichen Prozessstatus.
+- L49: <code>            self.assertIsInstance(json.loads(result.stdout), dict)</code> — Prüft, dass die Ausgabe tatsächlich als JSON-Objekt nutzbar ist.
+- L51: <code>    def test_negative_tcp_mutations(self):</code> — Definiert absichtlich fehlerhafte Varianten eines ansonsten echten TCP-Flows.
+- L52: <code>        original = pcap.read_pcap(OUT / &quot;nachher-server.pcap&quot;)</code> — Liest die realen erfolgreichen Serverpakete als Grundlage der Negativtests.
+- L53: <code>        client = auswertung.CLIENTS[0]</code> — Wählt client1 als gezielten Testflow; der positive Volltest enthält zusätzlich client2.
+- L54: <code>        for mutation in (&quot;no_synack&quot;, &quot;bad_ack&quot;, &quot;no_fin&quot;, &quot;payload&quot;, &quot;rst&quot;):</code> — Unterscheidet fünf unabhängige Beschädigungen des TCP-Verlaufs.
+- L55: <code>            packets = copy.deepcopy(original)</code> — Kopiert die Paketwörterbücher tief, damit jeder Mutationsfall frisch beginnt.
+- L56: <code>            flow = [p for p in packets if p.get(&quot;proto&quot;) == 6 and {p[&quot;src_ip&quot;], p[&quot;dst_ip&quot;]} == {client, auswertung.SERVER}]</code> — Isoliert die TCP-Pakete zwischen diesem Client und dem Originalserver.
+- L57: <code>            synack = next(p for p in flow if p[&quot;flags&quot;] &amp; 0x12 == 0x12)</code> — Findet das tatsächliche SYN-ACK anhand seiner gesetzten Flagbits.
+- L58: <code>            if mutation == &quot;no_synack&quot;:</code> — Wählt den Fall einer fehlenden Handshake-Antwort.
+- L59: <code>                packets.remove(synack)</code> — Entfernt genau das SYN-ACK aus der Testkopie.
+- L60: <code>            if mutation == &quot;bad_ack&quot;:</code> — Wählt den Fall einer inhaltlich falschen Handshake-Bestätigung.
+- L61: <code>                synack[&quot;ack&quot;] += 2</code> — Verändert die ACK-Nummer gezielt, sodass sie das SYN nicht mehr korrekt bestätigt.
+- L62: <code>            if mutation == &quot;no_fin&quot;:</code> — Wählt den Fall eines unvollständigen Verbindungsabbaus.
+- L63: <code>                packets.remove(next(p for p in flow if p[&quot;flags&quot;] &amp; 1))</code> — Entfernt eines der tatsächlichen FIN-Pakete aus der Kopie.
+- L64: <code>            if mutation == &quot;payload&quot;:</code> — Wählt den Fall einer falschen Serverbegrüßung.
+- L65: <code>                next(p for p in flow if p[&quot;payload&quot;])[&quot;payload&quot;] = b&quot;wrong&quot;.hex()</code> — Ersetzt die kopierten Nutzdaten durch einen anderen Hex-Byteinhalt.
+- L66: <code>            if mutation == &quot;rst&quot;:</code> — Wählt den Fall eines unerwarteten Verbindungsabbruchs.
+- L67: <code>                synack[&quot;flags&quot;] |= 4</code> — Setzt zusätzlich das RST-Bit im kopierten SYN-ACK.
+- L68: <code>            with self.subTest(mutation=mutation), self.assertRaises(ValueError):</code> — Erwartet für jede konkrete Beschädigung einen ValueError und benennt den Mutationsfall.
+- L69: <code>                auswertung.check_flow(packets, client)</code> — Ruft die wirkliche fachliche Flowprüfung auf, nicht eine im Test nachgebaute Prüffunktion.
+- L71: <code>    def test_bad_pcap(self):</code> — Beginnt die Prüfung unvollständiger oder falsch identifizierter PCAP-Dateien.
+- L72: <code>        raw = (OUT / &quot;vorher-server.pcap&quot;).read_bytes()</code> — Liest ein echtes PCAP als Grundlage für reproduzierbare Dateibeschädigungen.
+- L73: <code>        for broken in (b&quot;&quot;, b&quot;BAD!&quot; + raw[4:], raw[:-1], raw[:25]):</code> — Testet leere Daten, falsche Magic Bytes, fehlende Recorddaten und einen abgeschnittenen Recordkopf.
+- L74: <code>            with tempfile.TemporaryDirectory() as directory:</code> — Legt jede kaputte Datei in einem nach dem Test automatisch entfernten Arbeitsordner ab.
+- L75: <code>                path = Path(directory) / &quot;broken.pcap&quot;</code> — Bestimmt einen eigenen Testdateinamen, ohne die gesicherten Belege anzufassen.
+- L76: <code>                path.write_bytes(broken)</code> — Schreibt ausschließlich die temporäre absichtlich kaputte Bytefolge.
+- L77: <code>                with self.assertRaises(ValueError):</code> — Verlangt eine ausdrückliche Ablehnung statt stiller Teil-Auswertung.
+- L78: <code>                    pcap.read_pcap(path)</code> — Lässt den tatsächlichen Parser die kaputte temporäre Datei einlesen.
+- L80: <code>    def test_endian_and_nanoseconds(self):</code> — Beginnt den positiven Test aller vier unterstützten klassischen PCAP-Magic-Varianten.
+- L81: <code>        raw = (OUT / &quot;vorher-server.pcap&quot;).read_bytes()</code> — Nimmt den tatsächlichen little-endian-Mitschnitt als unveränderte Binärquelle.
+- L82: <code>        for magic, endian in ((b&quot;\xd4\xc3\xb2\xa1&quot;, &quot;&lt;&quot;), (b&quot;\xa1\xb2\xc3\xd4&quot;, &quot;&gt;&quot;), (b&quot;\x4d\x3c\xb2\xa1&quot;, &quot;&lt;&quot;), (b&quot;\xa1\xb2\x3c\x4d&quot;, &quot;&gt;&quot;)):</code> — Listet Mikro-/Nanosekunden-Magics jeweils mit little- und big-endian-Bytefolge.
+- L83: <code>            rebuilt = magic + struct.pack(endian + &quot;HHIIII&quot;, *struct.unpack(&quot;&lt;HHIIII&quot;, raw[4:24]))</code> — Schreibt einen zur Variante passenden globalen Dateikopf mit denselben Feldwerten.
+- L84: <code>            position = 24</code> — Beginnt die Recordkonvertierung unmittelbar nach dem 24-Byte-Dateikopf.
+- L85: <code>            while position &lt; len(raw):</code> — Wiederholt die Kopfkonvertierung bis zum echten Dateiende.
+- L86: <code>                values = struct.unpack(&quot;&lt;IIII&quot;, raw[position:position + 16])</code> — Liest Sekunden, Teilzeit und Paketlängen des jeweiligen Originalrecords.
+- L87: <code>                length = values[2]</code> — Übernimmt die erfasste Bytelänge, um die Recorddaten korrekt abzugrenzen.
+- L88: <code>                rebuilt += struct.pack(endian + &quot;IIII&quot;, *values) + raw[position + 16:position + 16 + length]</code> — Schreibt nur den Recordkopf in anderer Bytefolge und übernimmt die Paketbytes unverändert.
+- L89: <code>                position += 16 + length</code> — Springt genau um Recordkopf und Paketlänge zum nächsten Datensatz.
+- L90: <code>            with tempfile.TemporaryDirectory() as directory:</code> — Benutzt für jede Variante eine automatisch gelöschte Testdatei.
+- L91: <code>                path = Path(directory) / &quot;converted.pcap&quot;</code> — Wählt den Dateinamen der konvertierten Variante im temporären Ordner.
+- L92: <code>                path.write_bytes(rebuilt)</code> — Schreibt die neu kodierte PCAP-Datei, nicht die Originalbelege.
+- L93: <code>                self.assertEqual(pcap.read_pcap(path), pcap.read_pcap(OUT / &quot;vorher-server.pcap&quot;))</code> — Verlangt identische dekodierte Paketfelder für Original und jede unterstützte Variante; Zeitstempel sind nicht Teil dieser Prüfung.
+- L95: <code>    def test_isolation_failure_precedes_changes(self):</code> — Beginnt den Schutztest, dass eine fehlende Netzwerkisolation vor allen Netzänderungen abbricht.
+- L96: <code>        with patch.object(messen.os, &quot;geteuid&quot;, return_value=0), patch.object(messen.os, &quot;unshare&quot;, side_effect=PermissionError), patch.object(messen, &quot;Lab&quot;) as lab, self.assertRaises(PermissionError):</code> — Simuliert Rootrechte und ein scheiterndes unshare; Lab wird nur als Aufrufwächter ersetzt.
+- L97: <code>            messen.measure(BASE / &quot;nachweise/must-not-exist&quot;)</code> — Ruft den echten Mess-Startpfad unter den simulierten Fehlerbedingungen auf.
+- L98: <code>        lab.assert_not_called()</code> — Bestätigt, dass noch kein Lab-Objekt für Netzwerkbefehle erzeugt wurde.
+- L99: <code>        self.assertFalse((BASE / &quot;nachweise/must-not-exist&quot;).exists())</code> — Bestätigt, dass nicht einmal ein neuer Belegordner angelegt wurde.
+- L101: <code>    def test_existing_evidence_not_overwritten(self):</code> — Beginnt den Schutztest gegen Überschreiben bereits gesicherter Messungen.
+- L102: <code>        with patch.object(messen.os, &quot;geteuid&quot;, return_value=0), patch.object(messen.os, &quot;unshare&quot;), patch.object(messen, &quot;Lab&quot;) as lab, self.assertRaises(FileExistsError):</code> — Simuliert nur Root/Isolation und verlangt beim vorhandenen Belegordner FileExistsError.
+- L103: <code>            messen.measure(OUT)</code> — Versucht gezielt den geschützten vorhandenen run01-Ordner zu öffnen.
+- L104: <code>        lab.assert_not_called()</code> — Verlangt, dass das Labor beim Ordnerkonflikt gar nicht erst instanziiert wird.
+- L106: <code>    def test_wait_readiness_idle_then_ready(self):</code> — Beginnt den Regressionstest gegen vorschnellen Capture-Abbruch bei einem leeren Readiness-Poll.
+- L107: <code>        with patch.object(messen.selectors, &quot;DefaultSelector&quot;) as factory, patch.object(messen.time, &quot;monotonic&quot;, side_effect=[0, 0.1, 0.2]), patch.object(messen.os, &quot;read&quot;, return_value=b&quot;File: -&quot;):</code> — Ersetzt Selector, Uhr und Read durch kontrollierte Testdoubles, ohne einen echten Prozess zu starten.
+- L108: <code>            selector = factory.return_value.__enter__.return_value</code> — Greift auf den vom Context Manager gelieferten Selector-Testdouble zu.
+- L109: <code>            selector.select.side_effect = [[], [(object(), 1)]]</code> — Simuliert zuerst einen leeren Poll und erst danach ein lesbares Ereignis.
+- L110: <code>            stream = Mock()</code> — Stellt einen minimalen Stream-Testdouble mit nutzbarem fileno-Aufruf bereit.
+- L111: <code>            self.assertEqual(messen.wait_token(stream, b&quot;File: -&quot;), b&quot;File: -&quot;)</code> — Verlangt, dass die echte Wartelogik nach dem Leerlauf das tatsächliche Bereitschaftstoken zurückgibt.
+- L112: <code>            self.assertEqual(selector.select.call_count, 2)</code> — Bestätigt, dass wirklich zwei Pollrunden statt eines voreiligen Abbruchs stattfanden.
+- L114: <code>    def test_ai_labels_and_line_coverage(self):</code> — Beginnt die Vollständigkeits- und Aktualitätsprüfung der KI-Header und Zeilendokumentation.
+- L115: <code>        text = (BASE / &quot;zeilenerklaerung.md&quot;).read_text()</code> — Liest die fertige Zeilenerklärung als unabhängigen Text neben dem Code.
+- L116: <code>        sections = re.split(r&#x27;^## `([^`]+)`\s*$&#x27;, text, flags=re.M)</code> — Teilt die Dokumentation anhand der Dateinamenüberschriften in eindeutige Quellabschnitte.
+- L117: <code>        mapping = {sections[i]: [(int(n), html.unescape(source)) for n, source in re.findall(r&#x27;^- L(\d+): &lt;code&gt;(.*?)&lt;/code&gt; —&#x27;, sections[i + 1], re.M)] for i in range(1, len(sections), 2)}</code> — Extrahiert jede dokumentierte Zeilennummer samt HTML-decodiertem wörtlichem Quelltext in Reihenfolge.
+- L118: <code>        for path in sorted(BASE.rglob(&quot;*.py&quot;)):</code> — Untersucht rekursiv jede eigene Python-Datei, einschließlich dieses Testprogramms.
+- L119: <code>            if &quot;Angabe&quot; in path.parts:</code> — Erkennt unveränderte Originaldateien am Angabe-Verzeichnis.
+- L120: <code>                continue</code> — Nimmt die Originale von der eigenen KI-Header- und Zeilendokumentationspflicht aus.
+- L121: <code>            lines = path.read_text().splitlines()</code> — Liest den tatsächlichen aktuellen Quelltext einschließlich der Einrückung.
+- L122: <code>            self.assertIn(&quot;KI-Kennzeichnung&quot;, lines[0])</code> — Verlangt eine KI-Kennzeichnung bereits in der ersten Zeile jedes eigenen Programms.
+- L123: <code>            self.assertIn(&quot;gpt-6.1-sol&quot;, lines[0])</code> — Verlangt dort zusätzlich den tatsächlich verwendeten Modellbezeichner.
+- L124: <code>            self.assertEqual(mapping[path.relative_to(BASE).as_posix()], [(n, line) for n, line in enumerate(lines, 1) if line.strip()])</code> — Vergleicht Nummer, Reihenfolge, Quelltext und Einrückung jeder nichtleeren Zeile; Lücken, Duplikate und veraltete Zeilen fallen dadurch auf.
+- L127: <code>if __name__ == &quot;__main__&quot;:</code> — Unterscheidet direkten Teststart vom bloßen Import durch andere Programme.
+- L128: <code>    unittest.main()</code> — Startet die unittest-Testsuche und liefert bei Fehlschlag einen fehlerhaften Prozessstatus.

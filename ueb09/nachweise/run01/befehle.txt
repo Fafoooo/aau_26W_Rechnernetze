@@ -1,0 +1,632 @@
+[switch] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[switch] ip link add sw1 type bridge stp_state 0 forward_delay 0
+RC=0
+
+[switch] ip link set sw1 up
+RC=0
+
+[switch] ip link add sw2 type bridge stp_state 0 forward_delay 0
+RC=0
+
+[switch] ip link set sw2 up
+RC=0
+
+[client1] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[client1] ip link set lo up
+RC=0
+
+[client2] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[client2] ip link set lo up
+RC=0
+
+[server] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[server] ip link set lo up
+RC=0
+
+[router] sysctl -qw net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1
+RC=0
+
+[router] ip link set lo up
+RC=0
+
+[switch] ip link add p1 type veth peer name client1-eth0 netns 2725161
+RC=0
+
+[switch] ip link set p1 master sw1
+RC=0
+
+[switch] ip link set p1 up
+RC=0
+
+[client1] ip link set client1-eth0 address 02:00:00:00:01:10
+RC=0
+
+[client1] ip addr add 10.10.1.10/24 dev client1-eth0
+RC=0
+
+[client1] ip link set client1-eth0 up
+RC=0
+
+[switch] ethtool -K p1 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[client1] ethtool -K client1-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[switch] ip link add p2 type veth peer name client2-eth0 netns 2725164
+RC=0
+
+[switch] ip link set p2 master sw1
+RC=0
+
+[switch] ip link set p2 up
+RC=0
+
+[client2] ip link set client2-eth0 address 02:00:00:00:01:11
+RC=0
+
+[client2] ip addr add 10.10.1.11/24 dev client2-eth0
+RC=0
+
+[client2] ip link set client2-eth0 up
+RC=0
+
+[switch] ethtool -K p2 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[client2] ethtool -K client2-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[switch] ip link add p3 type veth peer name server-eth0 netns 2725167
+RC=0
+
+[switch] ip link set p3 master sw2
+RC=0
+
+[switch] ip link set p3 up
+RC=0
+
+[server] ip link set server-eth0 address 02:00:00:00:02:10
+RC=0
+
+[server] ip addr add 10.10.2.10/24 dev server-eth0
+RC=0
+
+[server] ip link set server-eth0 up
+RC=0
+
+[switch] ethtool -K p3 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[server] ethtool -K server-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[switch] ip link add pr0 type veth peer name router-eth0 netns 2725170
+RC=0
+
+[switch] ip link set pr0 master sw1
+RC=0
+
+[switch] ip link set pr0 up
+RC=0
+
+[router] ip link set router-eth0 address 02:00:00:00:01:01
+RC=0
+
+[router] ip addr add 10.10.1.1/24 dev router-eth0
+RC=0
+
+[router] ip link set router-eth0 up
+RC=0
+
+[switch] ethtool -K pr0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[router] ethtool -K router-eth0 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[switch] ip link add pr1 type veth peer name router-eth1 netns 2725170
+RC=0
+
+[switch] ip link set pr1 master sw2
+RC=0
+
+[switch] ip link set pr1 up
+RC=0
+
+[router] ip link set router-eth1 address 02:00:00:00:02:01
+RC=0
+
+[router] ip addr add 10.10.2.1/24 dev router-eth1
+RC=0
+
+[router] ip link set router-eth1 up
+RC=0
+
+[switch] ethtool -K pr1 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[router] ethtool -K router-eth1 tx off rx off tso off gso off gro off
+Actual changes:
+tx-checksum-ip-generic: off
+tx-generic-segmentation: off
+tx-tcp-segmentation: off
+tx-tcp-ecn-segmentation: off
+tx-tcp-mangleid-segmentation: off
+tx-tcp6-segmentation: off
+tx-udp-segmentation: off [not requested]
+tx-tcp-accecn-segmentation: off
+tx-checksum-sctp: off
+rx-checksum: off
+RC=0
+
+[router] sysctl -qw net.ipv4.ip_forward=1
+RC=0
+
+[client1] ip route replace default via 10.10.1.1 dev client1-eth0
+RC=0
+
+[client2] ip route replace default via 10.10.1.1 dev client2-eth0
+RC=0
+
+[server] ip route replace default via 10.10.2.254 dev server-eth0
+RC=0
+
+[client1] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+client1-eth0@if4 UP             10.10.1.10/24 
+RC=0
+
+[client1] ip route
+default via 10.10.1.1 dev client1-eth0 
+10.10.1.0/24 dev client1-eth0 proto kernel scope link src 10.10.1.10 
+RC=0
+
+[client1] ip neigh
+RC=0
+
+[client1] ip route get 10.10.2.10
+10.10.2.10 via 10.10.1.1 dev client1-eth0 src 10.10.1.10 uid 0 
+    cache 
+RC=0
+
+[client2] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+client2-eth0@if5 UP             10.10.1.11/24 
+RC=0
+
+[client2] ip route
+default via 10.10.1.1 dev client2-eth0 
+10.10.1.0/24 dev client2-eth0 proto kernel scope link src 10.10.1.11 
+RC=0
+
+[client2] ip neigh
+RC=0
+
+[client2] ip route get 10.10.2.10
+10.10.2.10 via 10.10.1.1 dev client2-eth0 src 10.10.1.11 uid 0 
+    cache 
+RC=0
+
+[server] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+server-eth0@if6  UP             10.10.2.10/24 
+RC=0
+
+[server] ip route
+default via 10.10.2.254 dev server-eth0 
+10.10.2.0/24 dev server-eth0 proto kernel scope link src 10.10.2.10 
+RC=0
+
+[server] ip neigh
+RC=0
+
+[server] ip route get 10.10.1.10
+10.10.1.10 via 10.10.2.254 dev server-eth0 src 10.10.2.10 uid 0 
+    cache 
+RC=0
+
+[router] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+router-eth0@if7  UP             10.10.1.1/24 
+router-eth1@if8  UP             10.10.2.1/24 
+RC=0
+
+[router] ip route
+10.10.1.0/24 dev router-eth0 proto kernel scope link src 10.10.1.1 
+10.10.2.0/24 dev router-eth1 proto kernel scope link src 10.10.2.1 
+RC=0
+
+[router] ip neigh
+RC=0
+
+[router] ip route get 10.10.2.10
+10.10.2.10 dev router-eth1 src 10.10.2.1 uid 0 
+    cache 
+RC=0
+
+[client1] ping -n -c 3 -i 0.2 -W 1 10.10.1.1
+PING 10.10.1.1 (10.10.1.1) 56(84) bytes of data.
+64 bytes from 10.10.1.1: icmp_seq=1 ttl=64 time=0.050 ms
+64 bytes from 10.10.1.1: icmp_seq=2 ttl=64 time=0.029 ms
+64 bytes from 10.10.1.1: icmp_seq=3 ttl=64 time=0.036 ms
+
+--- 10.10.1.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 410ms
+rtt min/avg/max/mdev = 0.029/0.038/0.050/0.008 ms
+RC=0
+
+[client2] ping -n -c 3 -i 0.2 -W 1 10.10.1.1
+PING 10.10.1.1 (10.10.1.1) 56(84) bytes of data.
+64 bytes from 10.10.1.1: icmp_seq=1 ttl=64 time=0.054 ms
+64 bytes from 10.10.1.1: icmp_seq=2 ttl=64 time=0.042 ms
+64 bytes from 10.10.1.1: icmp_seq=3 ttl=64 time=0.035 ms
+
+--- 10.10.1.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 413ms
+rtt min/avg/max/mdev = 0.035/0.043/0.054/0.007 ms
+RC=0
+
+[router] ping -n -c 3 -i 0.2 -W 1 10.10.2.10
+PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.
+64 bytes from 10.10.2.10: icmp_seq=1 ttl=64 time=0.043 ms
+64 bytes from 10.10.2.10: icmp_seq=2 ttl=64 time=0.040 ms
+64 bytes from 10.10.2.10: icmp_seq=3 ttl=64 time=0.027 ms
+
+--- 10.10.2.10 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 413ms
+rtt min/avg/max/mdev = 0.027/0.036/0.043/0.007 ms
+RC=0
+
+[server] ping -n -c 3 -i 0.2 -W 1 10.10.2.1
+PING 10.10.2.1 (10.10.2.1) 56(84) bytes of data.
+64 bytes from 10.10.2.1: icmp_seq=1 ttl=64 time=0.030 ms
+64 bytes from 10.10.2.1: icmp_seq=2 ttl=64 time=0.033 ms
+64 bytes from 10.10.2.1: icmp_seq=3 ttl=64 time=0.050 ms
+
+--- 10.10.2.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 413ms
+rtt min/avg/max/mdev = 0.030/0.037/0.050/0.008 ms
+RC=0
+
+[client1] ping -n -c 3 -i 0.2 -W 1 10.10.2.10
+PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.
+
+--- 10.10.2.10 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 414ms
+
+RC=1
+
+[client1] /usr/bin/python3 -B <ueb09>/Angabe/tcp_client.py
+Traceback (most recent call last):
+  File "<ueb09>/Angabe/tcp_client.py", line 9, in <module>
+    with socket.create_connection((HOST, PORT), timeout=5) as s:
+         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "/usr/lib/python3.13/socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+TimeoutError: timed out
+RC=1
+
+[client2] ping -n -c 3 -i 0.2 -W 1 10.10.2.10
+PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.
+
+--- 10.10.2.10 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 412ms
+
+RC=1
+
+[client2] /usr/bin/python3 -B <ueb09>/Angabe/tcp_client.py
+Traceback (most recent call last):
+  File "<ueb09>/Angabe/tcp_client.py", line 9, in <module>
+    with socket.create_connection((HOST, PORT), timeout=5) as s:
+         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "/usr/lib/python3.13/socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+TimeoutError: timed out
+RC=1
+
+[client1] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+client1-eth0@if4 UP             10.10.1.10/24 
+RC=0
+
+[client1] ip route
+default via 10.10.1.1 dev client1-eth0 
+10.10.1.0/24 dev client1-eth0 proto kernel scope link src 10.10.1.10 
+RC=0
+
+[client1] ip neigh
+10.10.1.1 dev client1-eth0 lladdr 02:00:00:00:01:01 STALE 
+RC=0
+
+[client1] ip route get 10.10.2.10
+10.10.2.10 via 10.10.1.1 dev client1-eth0 src 10.10.1.10 uid 0 
+    cache 
+RC=0
+
+[client2] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+client2-eth0@if5 UP             10.10.1.11/24 
+RC=0
+
+[client2] ip route
+default via 10.10.1.1 dev client2-eth0 
+10.10.1.0/24 dev client2-eth0 proto kernel scope link src 10.10.1.11 
+RC=0
+
+[client2] ip neigh
+10.10.1.1 dev client2-eth0 lladdr 02:00:00:00:01:01 REACHABLE 
+RC=0
+
+[client2] ip route get 10.10.2.10
+10.10.2.10 via 10.10.1.1 dev client2-eth0 src 10.10.1.11 uid 0 
+    cache 
+RC=0
+
+[server] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+server-eth0@if6  UP             10.10.2.10/24 
+RC=0
+
+[server] ip route
+default via 10.10.2.254 dev server-eth0 
+10.10.2.0/24 dev server-eth0 proto kernel scope link src 10.10.2.10 
+RC=0
+
+[server] ip neigh
+10.10.2.1 dev server-eth0 lladdr 02:00:00:00:02:01 REACHABLE 
+10.10.2.254 dev server-eth0 FAILED 
+RC=0
+
+[server] ip route get 10.10.1.10
+10.10.1.10 via 10.10.2.254 dev server-eth0 src 10.10.2.10 uid 0 
+    cache 
+RC=0
+
+[router] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+router-eth0@if7  UP             10.10.1.1/24 
+router-eth1@if8  UP             10.10.2.1/24 
+RC=0
+
+[router] ip route
+10.10.1.0/24 dev router-eth0 proto kernel scope link src 10.10.1.1 
+10.10.2.0/24 dev router-eth1 proto kernel scope link src 10.10.2.1 
+RC=0
+
+[router] ip neigh
+10.10.2.10 dev router-eth1 lladdr 02:00:00:00:02:10 STALE 
+10.10.1.11 dev router-eth0 lladdr 02:00:00:00:01:11 REACHABLE 
+10.10.1.10 dev router-eth0 lladdr 02:00:00:00:01:10 REACHABLE 
+RC=0
+
+[router] ip route get 10.10.2.10
+10.10.2.10 dev router-eth1 src 10.10.2.1 uid 0 
+    cache 
+RC=0
+
+[server] ip route replace default via 10.10.2.1 dev server-eth0
+RC=0
+
+[client1] ping -n -c 3 -i 0.2 -W 1 10.10.2.10
+PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.
+64 bytes from 10.10.2.10: icmp_seq=1 ttl=63 time=0.037 ms
+64 bytes from 10.10.2.10: icmp_seq=2 ttl=63 time=0.030 ms
+64 bytes from 10.10.2.10: icmp_seq=3 ttl=63 time=0.043 ms
+
+--- 10.10.2.10 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 412ms
+rtt min/avg/max/mdev = 0.030/0.036/0.043/0.005 ms
+RC=0
+
+[client1] /usr/bin/python3 -B <ueb09>/Angabe/tcp_client.py
+RN-Lab forensic test server
+RC=0
+
+[client2] ping -n -c 3 -i 0.2 -W 1 10.10.2.10
+PING 10.10.2.10 (10.10.2.10) 56(84) bytes of data.
+64 bytes from 10.10.2.10: icmp_seq=1 ttl=63 time=0.035 ms
+64 bytes from 10.10.2.10: icmp_seq=2 ttl=63 time=0.057 ms
+64 bytes from 10.10.2.10: icmp_seq=3 ttl=63 time=0.046 ms
+
+--- 10.10.2.10 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 410ms
+rtt min/avg/max/mdev = 0.035/0.046/0.057/0.009 ms
+RC=0
+
+[client2] /usr/bin/python3 -B <ueb09>/Angabe/tcp_client.py
+RN-Lab forensic test server
+RC=0
+
+[client1] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+client1-eth0@if4 UP             10.10.1.10/24 
+RC=0
+
+[client1] ip route
+default via 10.10.1.1 dev client1-eth0 
+10.10.1.0/24 dev client1-eth0 proto kernel scope link src 10.10.1.10 
+RC=0
+
+[client1] ip neigh
+10.10.1.1 dev client1-eth0 lladdr 02:00:00:00:01:01 STALE 
+RC=0
+
+[client1] ip route get 10.10.2.10
+10.10.2.10 via 10.10.1.1 dev client1-eth0 src 10.10.1.10 uid 0 
+    cache 
+RC=0
+
+[client2] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+client2-eth0@if5 UP             10.10.1.11/24 
+RC=0
+
+[client2] ip route
+default via 10.10.1.1 dev client2-eth0 
+10.10.1.0/24 dev client2-eth0 proto kernel scope link src 10.10.1.11 
+RC=0
+
+[client2] ip neigh
+10.10.1.1 dev client2-eth0 lladdr 02:00:00:00:01:01 REACHABLE 
+RC=0
+
+[client2] ip route get 10.10.2.10
+10.10.2.10 via 10.10.1.1 dev client2-eth0 src 10.10.1.11 uid 0 
+    cache 
+RC=0
+
+[server] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+server-eth0@if6  UP             10.10.2.10/24 
+RC=0
+
+[server] ip route
+default via 10.10.2.1 dev server-eth0 
+10.10.2.0/24 dev server-eth0 proto kernel scope link src 10.10.2.10 
+RC=0
+
+[server] ip neigh
+10.10.2.1 dev server-eth0 lladdr 02:00:00:00:02:01 STALE 
+10.10.2.254 dev server-eth0 FAILED 
+RC=0
+
+[server] ip route get 10.10.1.10
+10.10.1.10 via 10.10.2.1 dev server-eth0 src 10.10.2.10 uid 0 
+    cache 
+RC=0
+
+[router] ip -br addr
+lo               UNKNOWN        127.0.0.1/8 
+router-eth0@if7  UP             10.10.1.1/24 
+router-eth1@if8  UP             10.10.2.1/24 
+RC=0
+
+[router] ip route
+10.10.1.0/24 dev router-eth0 proto kernel scope link src 10.10.1.1 
+10.10.2.0/24 dev router-eth1 proto kernel scope link src 10.10.2.1 
+RC=0
+
+[router] ip neigh
+10.10.2.10 dev router-eth1 lladdr 02:00:00:00:02:10 STALE 
+10.10.1.11 dev router-eth0 lladdr 02:00:00:00:01:11 REACHABLE 
+10.10.1.10 dev router-eth0 lladdr 02:00:00:00:01:10 REACHABLE 
+RC=0
+
+[router] ip route get 10.10.2.10
+10.10.2.10 dev router-eth1 src 10.10.2.1 uid 0 
+    cache 
+RC=0

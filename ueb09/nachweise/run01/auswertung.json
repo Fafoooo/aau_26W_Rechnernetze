@@ -1,0 +1,59 @@
+{
+  "provenance": "Echte Linux-Netzwerk-Namespaces/veth/Linux Bridges; NICHT Mininet/OVS; keine künstlichen Pakete",
+  "fault": {
+    "server_arp_wrong_gateway": 12,
+    "arp_reply_wrong_gateway": 0,
+    "server_tcp_replies": 0,
+    "icmp_errors_on_server_interface": [],
+    "syn_clients_reached_server": [
+      "10.10.1.10",
+      "10.10.1.11"
+    ]
+  },
+  "routed_tcp_before": 10,
+  "routed_tcp_after": 18,
+  "flows": [
+    {
+      "client": "10.10.1.10",
+      "client_port": 54918,
+      "server_port": 5000,
+      "packets": 9,
+      "syn_frame": 7,
+      "synack_frame": 8,
+      "greeting": "RN-Lab forensic test server\n",
+      "greeting_bytes": 28,
+      "fin_frames": [
+        12,
+        13
+      ],
+      "rst_count": 0
+    },
+    {
+      "client": "10.10.1.11",
+      "client_port": 52262,
+      "server_port": 5000,
+      "packets": 9,
+      "syn_frame": 22,
+      "synack_frame": 23,
+      "greeting": "RN-Lab forensic test server\n",
+      "greeting_bytes": 28,
+      "fin_frames": [
+        27,
+        28
+      ],
+      "rst_count": 0
+    }
+  ],
+  "capture_counts": {
+    "vorher-client1.pcap": 10,
+    "vorher-client2.pcap": 10,
+    "vorher-router0.pcap": 20,
+    "vorher-router1.pcap": 30,
+    "vorher-server.pcap": 30,
+    "nachher-client1.pcap": 15,
+    "nachher-client2.pcap": 15,
+    "nachher-router0.pcap": 30,
+    "nachher-router1.pcap": 30,
+    "nachher-server.pcap": 30
+  }
+}

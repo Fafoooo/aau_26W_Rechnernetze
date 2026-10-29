@@ -1,0 +1,4 @@
+Negativkontrolle erkannt: missing
+Negativkontrolle erkannt: duplicate
+Negativkontrolle erkannt: stale_source
+Syntax, lokale Markdown-Links, geschützte Quellen/Belege und drei Dokumentations-Negativkontrollen bestanden.

@@ -1,0 +1,16 @@
+test_ai_labels_and_line_coverage (test_nachweise.EvidenceTests.test_ai_labels_and_line_coverage) ... ok
+test_bad_pcap (test_nachweise.EvidenceTests.test_bad_pcap) ... ok
+test_cli_all_tasks (test_nachweise.EvidenceTests.test_cli_all_tasks) ... ok
+test_complete_evidence (test_nachweise.EvidenceTests.test_complete_evidence) ... ok
+test_endian_and_nanoseconds (test_nachweise.EvidenceTests.test_endian_and_nanoseconds) ... ok
+test_existing_evidence_not_overwritten (test_nachweise.EvidenceTests.test_existing_evidence_not_overwritten) ... ok
+test_independent_tcpdump_counts (test_nachweise.EvidenceTests.test_independent_tcpdump_counts) ... ok
+test_isolation_failure_precedes_changes (test_nachweise.EvidenceTests.test_isolation_failure_precedes_changes) ... ok
+test_negative_tcp_mutations (test_nachweise.EvidenceTests.test_negative_tcp_mutations) ... ok
+test_original_archive (test_nachweise.EvidenceTests.test_original_archive) ... ok
+test_wait_readiness_idle_then_ready (test_nachweise.EvidenceTests.test_wait_readiness_idle_then_ready) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.376s
+
+OK
