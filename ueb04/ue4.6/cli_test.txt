@@ -1,0 +1,16 @@
+$ python3 -B server.py --host 127.0.0.1 --port 0 --connections 2 --timeout 5
+READY 127.0.0.1:46513
+$ python3 -B client.py --host 127.0.0.1 --port 46513 'Einzelne Nachricht'
+REPLY 'Einzelne Nachricht'
+Client-Exitcode: 0
+$ python3 -B client.py --host 127.0.0.1 --port 46513 eins 'Grüße 🌍' ''
+REPLY 'eins'
+REPLY 'Grüße 🌍'
+REPLY ''
+Client-Exitcode: 0
+Serverausgabe nach READY:
+RECEIVED 127.0.0.1:38936 'Einzelne Nachricht'
+RECEIVED 127.0.0.1:38942 'eins'
+RECEIVED 127.0.0.1:38942 'Grüße 🌍'
+RECEIVED 127.0.0.1:38942 ''
+Server-Exitcode: 0

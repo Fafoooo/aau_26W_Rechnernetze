@@ -1,0 +1,24 @@
+$ python3 -B -W error::ResourceWarning -m unittest -v test_tcp
+test_coalescing_and_remaining_partial_frame (test_tcp.FramingTests.test_coalescing_and_remaining_partial_frame) ... ok
+test_empty_stream_is_not_empty_message (test_tcp.FramingTests.test_empty_stream_is_not_empty_message) ... ok
+test_exact_limit (test_tcp.FramingTests.test_exact_limit) ... ok
+test_fragmentation_including_utf8_and_empty (test_tcp.FramingTests.test_fragmentation_including_utf8_and_empty) ... ok
+test_invalid_frames_and_truncated_eof (test_tcp.FramingTests.test_invalid_frames_and_truncated_eof) ... ok
+test_outgoing_invalid (test_tcp.FramingTests.test_outgoing_invalid) ... ok
+test_oversized_with_and_without_lf (test_tcp.FramingTests.test_oversized_with_and_without_lf) ... ok
+test_cli_rejects_bad_arguments_and_payloads (test_tcp.TCPTests.test_cli_rejects_bad_arguments_and_payloads) ... ok
+test_cli_single_persistent_and_multiple_connections (test_tcp.TCPTests.test_cli_single_persistent_and_multiple_connections) ... ok
+test_client_rejects_bad_missing_extra_or_silent_reply (test_tcp.TCPTests.test_client_rejects_bad_missing_extra_or_silent_reply) ... ok
+test_empty_connection_then_valid_connection (test_tcp.TCPTests.test_empty_connection_then_valid_connection) ... ok
+test_real_tcp_coalesced_and_exact_limit (test_tcp.TCPTests.test_real_tcp_coalesced_and_exact_limit) ... ok
+test_real_tcp_fragmented_writes (test_tcp.TCPTests.test_real_tcp_fragmented_writes) ... ok
+test_real_tcp_invalid_frames_and_recovery (test_tcp.TCPTests.test_real_tcp_invalid_frames_and_recovery) ... ok
+test_server_accept_timeout (test_tcp.TCPTests.test_server_accept_timeout) ... ok
+test_server_connection_timeout (test_tcp.TCPTests.test_server_connection_timeout) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 1.817s
+
+OK
+
+Exitcode: 0

@@ -1,0 +1,27 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host proto kernel_lo 
+       valid_lft forever preferred_lft forever
+7: router-eth0@if8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc netem state UP group default qlen 1000
+    link/ether 52:84:a7:d4:2c:a2 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.0.1.1/24 scope global router-eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::5084:a7ff:fed4:2ca2/64 scope link tentative proto kernel_ll 
+       valid_lft forever preferred_lft forever
+10: router-eth1@if9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc netem state UP group default qlen 1000
+    link/ether fa:84:f8:b5:61:33 brd ff:ff:ff:ff:ff:ff link-netnsid 2
+    inet 10.0.2.1/24 scope global router-eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f884:f8ff:feb5:6133/64 scope link tentative proto kernel_ll 
+       valid_lft forever preferred_lft forever
+10.0.1.0/24 dev router-eth0 proto kernel scope link src 10.0.1.1 
+10.0.2.0/24 dev router-eth1 proto kernel scope link src 10.0.2.1 
+10.0.2.2 dev router-eth1 src 10.0.2.1 uid 0 
+    cache 
+10.0.1.2 dev router-eth0 src 10.0.1.1 uid 0 
+    cache 
+qdisc noqueue 0: dev lo root refcnt 2 
+qdisc netem 8006: dev router-eth0 root refcnt 17 limit 1000 delay 20ms seed 17272770164560255403
+qdisc netem 8007: dev router-eth1 root refcnt 17 limit 1000 delay 20ms seed 17048619510432276829

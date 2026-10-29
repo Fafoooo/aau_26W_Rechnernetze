@@ -1,0 +1,3 @@
+SENT 10.0.0.1:54538 -> 10.0.0.2:5000 19 bytes b'Hello from Mininet!'
+SENT 10.0.0.1:59071 -> 10.0.0.2:5000 20 bytes b'Ge\xc3\xa4nderte Nachricht'
+SENT 10.0.0.1:55521 -> 10.0.0.2:5000 12 bytes b'Gr\xc3\xbc\xc3\x9fe \xf0\x9f\x8c\x8d'

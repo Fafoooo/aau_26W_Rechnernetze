@@ -1,0 +1,10 @@
+{
+  "provenance": "Reale Linux-Netzwerk-Namespaces, NICHT Mininet",
+  "checks": [
+    "h1/h2: getrennte net-Namespaces, gleicher UTS-Namespace",
+    "UDP: drei echte Datagramme von 10.0.0.1 an 10.0.0.2:5000",
+    "Routing: 4/4 Ping-Antworten über Router",
+    "Forwarding aus: Ping scheitert",
+    "TCP: einzelne und drei persistente Nachrichten einschließlich UTF-8 und Leertext"
+  ]
+}

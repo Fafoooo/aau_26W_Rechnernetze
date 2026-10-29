@@ -1,0 +1,13 @@
+test_base_arguments (__main__.DiagnosisTests.test_base_arguments) ... ok
+test_context_does_not_certify_mininet (__main__.DiagnosisTests.test_context_does_not_certify_mininet) ... ok
+test_every_subprocess_argument (__main__.DiagnosisTests.test_every_subprocess_argument) ... ok
+test_missing_and_denied (__main__.DiagnosisTests.test_missing_and_denied) ... ok
+test_nonzero_is_preserved (__main__.DiagnosisTests.test_nonzero_is_preserved) ... ok
+test_report_restricts_path_and_uses_exclusive_open (__main__.DiagnosisTests.test_report_restricts_path_and_uses_exclusive_open) ... ok
+test_routing_arguments (__main__.DiagnosisTests.test_routing_arguments) ... ok
+test_timeout_preserves_bytes (__main__.DiagnosisTests.test_timeout_preserves_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.005s
+
+OK

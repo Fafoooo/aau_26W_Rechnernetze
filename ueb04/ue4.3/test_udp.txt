@@ -1,0 +1,10 @@
+test_cli_rejects_arguments (test_udp.UDPTests.test_cli_rejects_arguments) ... ok
+test_cli_three_datagrams (test_udp.UDPTests.test_cli_three_datagrams) ... ok
+test_oversized_rejected_before_socket (test_udp.UDPTests.test_oversized_rejected_before_socket) ... ok
+test_send_utf8_empty_and_exact_limit (test_udp.UDPTests.test_send_utf8_empty_and_exact_limit) ... ok
+test_timeout (test_udp.UDPTests.test_timeout) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.396s
+
+OK

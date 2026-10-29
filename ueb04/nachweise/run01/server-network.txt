@@ -1,0 +1,20 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host proto kernel_lo 
+       valid_lft forever preferred_lft forever
+9: server-eth0@if10: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc netem state UP group default qlen 1000
+    link/ether aa:3c:79:6d:b4:67 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.0.2.2/24 scope global server-eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a83c:79ff:fe6d:b467/64 scope link tentative proto kernel_ll 
+       valid_lft forever preferred_lft forever
+default via 10.0.2.1 dev server-eth0 
+10.0.2.0/24 dev server-eth0 proto kernel scope link src 10.0.2.2 
+local 10.0.2.2 dev lo src 10.0.2.2 uid 0 
+    cache <local> 
+10.0.1.2 via 10.0.2.1 dev server-eth0 src 10.0.2.2 uid 0 
+    cache 
+qdisc noqueue 0: dev lo root refcnt 2 
+qdisc netem 8008: dev server-eth0 root refcnt 17 limit 1000 delay 20ms seed 12498803441486253443

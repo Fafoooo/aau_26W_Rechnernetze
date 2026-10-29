@@ -1,0 +1,4 @@
+READY 10.0.0.2:5000
+RECEIVED 10.0.0.1:54538 b'Hello from Mininet!'
+RECEIVED 10.0.0.1:59071 b'Ge\xc3\xa4nderte Nachricht'
+RECEIVED 10.0.0.1:55521 b'Gr\xc3\xbc\xc3\x9fe \xf0\x9f\x8c\x8d'

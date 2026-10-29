@@ -1,0 +1,48 @@
+{
+  "kind": "UDP",
+  "frames": [
+    {
+      "frame": 1,
+      "source": "10.0.0.1",
+      "target": "10.0.0.2",
+      "ipv4_length": 47,
+      "ipv4_header": 20,
+      "ttl": 64,
+      "protocol": "UDP",
+      "sport": 54538,
+      "dport": 5000,
+      "header_bytes": 8,
+      "transport_length": 27,
+      "payload_hex": "48656c6c6f2066726f6d204d696e696e657421"
+    },
+    {
+      "frame": 2,
+      "source": "10.0.0.1",
+      "target": "10.0.0.2",
+      "ipv4_length": 48,
+      "ipv4_header": 20,
+      "ttl": 64,
+      "protocol": "UDP",
+      "sport": 59071,
+      "dport": 5000,
+      "header_bytes": 8,
+      "transport_length": 28,
+      "payload_hex": "4765c3a46e6465727465204e6163687269636874"
+    },
+    {
+      "frame": 3,
+      "source": "10.0.0.1",
+      "target": "10.0.0.2",
+      "ipv4_length": 40,
+      "ipv4_header": 20,
+      "ttl": 64,
+      "protocol": "UDP",
+      "sport": 55521,
+      "dport": 5000,
+      "header_bytes": 8,
+      "transport_length": 20,
+      "payload_hex": "4772c3bcc39f6520f09f8c8d"
+    }
+  ],
+  "verified": true
+}
